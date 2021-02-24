@@ -1,11 +1,5 @@
-import {
-    AbsolutePosition,
-    Fingerprint,
-    RelativePosition,
-    RelativeValue,
-    DataObjectService,
-    DataServiceDriver,
-} from '@openhps/core';
+import { AbsolutePosition, RelativePosition, RelativeValue, DataObjectService, DataServiceDriver } from '@openhps/core';
+import { Fingerprint } from '../data';
 
 /**
  * A fingerprint service handles the preprocessing and storage of fingerprints.
