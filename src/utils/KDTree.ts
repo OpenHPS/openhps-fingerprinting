@@ -1,4 +1,5 @@
-import { AbsolutePosition, Fingerprint } from '@openhps/core';
+import { AbsolutePosition } from '@openhps/core';
+import { Fingerprint } from '../data';
 import { BinaryHeap } from './_internal/BinaryHeap';
 
 export class KDTree {

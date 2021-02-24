@@ -50,13 +50,13 @@
     "uuid": "^8.3.2"
   },
   "peerDependencies": {
-    "@openhps/core": ">=0.2.0-alpha.14",
+    "@openhps/core": ">=0.3.0-alpha.2",
     "reflect-metadata": ">=0.1.13"
   },
   "devDependencies": {
     "@commitlint/cli": "^11.0.0",
     "@commitlint/config-conventional": "^11.0.0",
-    "@openhps/core": ">=0.2.0-alpha.23",
+    "@openhps/core": "^0.3.0-alpha.2",
     "@openhps/csv": "0.1.0-alpha.61",
     "@types/chai": "^4.2.14",
     "@types/mocha": "^8.2.0",

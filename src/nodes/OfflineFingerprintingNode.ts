@@ -1,4 +1,5 @@
-import { DataFrame, DataObject, Fingerprint } from '@openhps/core';
+import { DataFrame, DataObject } from '@openhps/core';
+import { Fingerprint } from '../data';
 import { FingerprintingNode } from './FingerprintingNode';
 
 export class OfflineFingerprintingNode<InOut extends DataFrame> extends FingerprintingNode<InOut> {

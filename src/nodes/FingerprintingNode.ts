@@ -1,11 +1,11 @@
 import {
-    Fingerprint,
     DataFrame,
     DataObject,
     RelativePosition,
     ObjectProcessingNode,
     ObjectProcessingNodeOptions,
 } from '@openhps/core';
+import { Fingerprint } from '../data';
 import { FingerprintingOptions, FingerprintService } from '../service/FingerprintService';
 
 /**
