@@ -18,7 +18,7 @@
 </p>
 
 <h3 align="center">
-    <a href="https://github.com/OpenHPS/openhps-core">@openhps/core</a> &mdash; <a href="https://openhps.org/docs/csv">API</a>
+    <a href="https://github.com/OpenHPS/openhps-core">@openhps/core</a> &mdash; <a href="https://openhps.org/docs/fingerprinting">API</a>
 </h3>
 
 <br />

@@ -36,7 +36,10 @@ export class KDTree {
     }
 
     private _nearestSearch(point: number[], bestNodes: BinaryHeap<[KDTree, number]>, count: number, node: KDTree) {
-        const ownDistance = this._distanceFn(point, node.fingerprint.vector);
+        let ownDistance = this._distanceFn(point, node.fingerprint.vector);
+        if (ownDistance === 0) {
+            ownDistance = 1e-5;
+        }
         const vector = [...node.fingerprint.vector];
 
         vector[this.axis] = point[this.axis];

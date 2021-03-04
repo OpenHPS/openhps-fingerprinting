@@ -9,8 +9,6 @@ import {
     DataObject,
     Absolute3DPosition,
     RelativeRSSIPosition,
-    TrilaterationNode,
-    RFTransmitterObject
 } from '@openhps/core';
 import { CSVDataSource } from '@openhps/csv';
 import { EvaluationDataFrame } from '../../mock/data/EvaluationDataFrame';

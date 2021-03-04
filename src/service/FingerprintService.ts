@@ -13,6 +13,7 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
         super(dataServiceDriver);
         this.options = options || {};
         this.name = this.options.classifier.length > 0 ? this.options.classifier : this.name;
+        this.options.aggFn = this.options.aggFn || ((values: number[]) => values.reduce((a, b) => a + b) / values.length);
         this.once('ready', this.update.bind(this));
     }
 
@@ -21,7 +22,6 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
         // Default options
         this.options.classifier = this.options.classifier || '';
         this.options.defaultValue = this.options.defaultValue || 0;
-        this.options.defaultType = this.options.defaultType || RelativeValue;
         this.options.groupBy = this.options.groupBy || ((pos: AbsolutePosition) => JSON.stringify(pos.toVector3()));
     }
 
@@ -57,43 +57,33 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
             // We do not filter as we expect a separate service per classifier
             this.findAll()
                 .then((fingerprints) => {
-                    const mergedFingerprints = new Map<string, Fingerprint>();
+                    const processed = new Map<string, Fingerprint>();
                     this.cachedReferences = new Set();
 
                     fingerprints.forEach((fingerprint) => {
-                        /* Add missing reference positions (objects not in range) */
+                        // Extract features
+                        fingerprint.relativePositions = this.featureExtraction(fingerprint.relativePositions);
+                        
+                        // Cache all known reference objects
                         fingerprint.relativePositions.forEach((relativePosition) => {
                             if (!this.cachedReferences.has(relativePosition.referenceObjectUID))
                                 this.cachedReferences.add(relativePosition.referenceObjectUID);
                         });
 
-                        /* Merge fingerprint value */
-                        const serializedPoint = this.options.groupBy(fingerprint.position);
-                        if (mergedFingerprints.has(serializedPoint)) {
-                            const existingFingerprint = mergedFingerprints.get(serializedPoint);
-                            existingFingerprint.relativePositions.forEach((relativePosition) => {
-                                const existingRelativeLocations = fingerprint.getRelativePositions(
-                                    relativePosition.referenceObjectUID,
-                                );
-                                if (existingRelativeLocations.length !== 0) {
-                                    existingRelativeLocations[0].referenceValue += relativePosition.referenceValue;
-                                    existingRelativeLocations[0].referenceValue /= 2;
-                                }
-                            });
-
+                        // Append fingerprint value
+                        const group = JSON.stringify(this.options.groupBy(fingerprint.position));
+                        if (processed.has(group)) {
+                            const existingFingerprint = processed.get(group);
                             fingerprint.relativePositions.forEach((relativePosition) => {
-                                if (!existingFingerprint.getRelativePosition(relativePosition.referenceObjectUID)) {
-                                    existingFingerprint.addRelativePosition(relativePosition);
-                                }
+                                existingFingerprint.addRelativePosition(relativePosition);
                             });
-                            mergedFingerprints.set(serializedPoint, existingFingerprint);
                         } else {
-                            mergedFingerprints.set(serializedPoint, fingerprint);
+                            processed.set(group, fingerprint);
                         }
                     });
-                    const filteredFingerprints = Array.from(mergedFingerprints.values());
+                    const filteredFingerprints = Array.from(processed.values());
 
-                    /* Cache fingerprints to simple vectors */
+                    // Cache relative positions to vector values
                     this.cacheFingerprints(filteredFingerprints);
                     this.emit('update');
                     resolve();
@@ -114,16 +104,21 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
                 // Complete missing references
                 this.cachedReferences.forEach((relativeObject) => {
                     if (!fingerprint.hasRelativePosition(relativeObject)) {
-                        const relativePosition = new this.options.defaultType();
-                        relativePosition.referenceObjectUID = relativeObject;
-                        relativePosition.referenceValue = this.options.defaultValue;
-                        fingerprint.addRelativePosition(relativePosition);
+                        fingerprint.addRelativePosition(
+                            new RelativeValue(
+                                    relativeObject, 
+                                    this.options.defaultValue
+                                ));
                     }
                 });
-                fingerprint.computeVector();
+                fingerprint.computeVector(this.options.aggFn);
                 this.cache.push(fingerprint);
             });
         }
+    }
+
+    protected featureExtraction(rel: Array<RelativeValue>): Array<RelativeValue> {
+        return rel;
     }
 }
 
@@ -132,12 +127,6 @@ export interface FingerprintingOptions {
      * Default value of missing fingerprint values
      */
     defaultValue?: number;
-    /**
-     * Relative position type
-     *
-     * @default RelativeValue
-     */
-    defaultType?: new () => RelativePosition;
     /**
      * Fingerprint classifier
      *
@@ -149,7 +138,13 @@ export interface FingerprintingOptions {
      *  By default, uses the position vector only.
      *  Can be modified for different rounding options or addition of orientation.
      */
-    groupBy?: (position: AbsolutePosition) => string;
+    groupBy?: (position: AbsolutePosition) => any;
+    /**
+     * Aggregation function
+     *
+     * @default {} Mean value
+     */
+    aggFn?: (values: number[], key?: string) => number;
     /**
      * Auto update the fingerprints for each newly recorded
      * fingerprint.
@@ -159,4 +154,5 @@ export interface FingerprintingOptions {
      * @default false
      */
     autoUpdate?: boolean;
+    interpolate?: boolean;
 }

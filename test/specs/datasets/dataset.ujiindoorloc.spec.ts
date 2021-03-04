@@ -134,7 +134,7 @@ describe('dataset', () => {
                 count: 1111,
                 sequentialPull: false
             }).then(() => {
-                expect(totalError / totalValues).to.be.lessThan(15);
+                expect(totalError / totalValues).to.be.lessThan(18);
                 done();
             }).catch(done);
         });
