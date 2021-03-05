@@ -33,7 +33,7 @@ export class IMUFeatureExtractionNode<InOut extends IMUDataFrame> extends Proces
             if (frame.angularVelocity) {
                 source.addRelativePosition(new RelativeValue('RRATE_X', frame.angularVelocity.x));
                 source.addRelativePosition(new RelativeValue('RRATE_Y', frame.angularVelocity.y));
-                source.addRelativePosition(new RelativeValue('RRATE_Y', frame.angularVelocity.z));
+                source.addRelativePosition(new RelativeValue('RRATE_Z', frame.angularVelocity.z));
             }
 
             if (frame.absoluteOrientation) {
