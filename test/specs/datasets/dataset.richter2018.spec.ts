@@ -18,7 +18,7 @@ import {
     FingerprintService,
     Fingerprint,
     KNNFingerprintingNode,
-    OfflineFingerprintingNode
+    FingerprintingNode
 } from '../../../src/';
 
 /**
@@ -102,7 +102,7 @@ describe('dataset', () => {
                     ),
                 )
                 .via(
-                    new OfflineFingerprintingNode()
+                    new FingerprintingNode()
                 )
                 .to(new CallbackSinkNode())
                 .build()

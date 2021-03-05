@@ -1,6 +1,6 @@
 import { Absolute2DPosition, AbsolutePosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation, RelativeRSSIPosition } from "@openhps/core";
 import { CSVDataSource } from '@openhps/csv';
-import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, OfflineFingerprintingNode, WeightFunction } from "../../../src";
+import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, FingerprintingNode, WeightFunction } from "../../../src";
 import { expect } from "chai";
 import { EvaluationDataFrame } from "../../mock/data/EvaluationDataFrame";
 
@@ -131,7 +131,7 @@ describe('dataset ipin2021', () => {
                 .addService(service)
                 .addShape(GraphBuilder.create()
                     .from(trainData)
-                    .via(new OfflineFingerprintingNode())
+                    .via(new FingerprintingNode())
                     .to())
                 .addShape(GraphBuilder.create()
                     .from(testDataMean, testDataRaw)

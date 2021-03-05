@@ -59,6 +59,7 @@
     "@commitlint/config-conventional": "^11.0.0",
     "@openhps/core": "^0.3.0-alpha.7",
     "@openhps/csv": "0.1.0-alpha.61",
+    "@openhps/imu": "0.1.0-alpha.1",
     "@types/chai": "^4.2.14",
     "@types/mocha": "^8.2.0",
     "@types/node": "^12.19.9",

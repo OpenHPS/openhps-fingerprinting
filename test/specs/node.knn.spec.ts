@@ -15,7 +15,7 @@ import {
     FingerprintService,
     Fingerprint,
     KNNFingerprintingNode,
-    OfflineFingerprintingNode, 
+    FingerprintingNode, 
 } from '../../src/';
 
 describe('node knn fingerprinting', () => {
@@ -45,11 +45,11 @@ describe('node knn fingerprinting', () => {
                 autoUpdate: true
             }))
             .from()
-            .via(new OfflineFingerprintingNode({
+            .via(new FingerprintingNode({
                 valueFilter: (pos) => pos.referenceObjectUID.startsWith("MAG_"),
                 classifier: "geo",
                 name: "geomagnetic-fingerprinting",
-            }), new OfflineFingerprintingNode({
+            }), new FingerprintingNode({
                 valueFilter: (pos) => pos.referenceObjectType === RFTransmitterObject.name,
                 classifier: "wlan",
                 name: "wlan-fingerprinting",

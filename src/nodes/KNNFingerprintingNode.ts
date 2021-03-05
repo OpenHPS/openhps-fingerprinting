@@ -1,8 +1,7 @@
-import { FingerprintingNodeOptions } from './FingerprintingNode';
+import { FingerprintingNode, FingerprintingNodeOptions } from './FingerprintingNode';
 import { DataFrame, DataObject, RelativePosition, AbsolutePosition, Vector3, RelativeValue } from '@openhps/core';
 import { WeightFunction } from './WeightFunction';
 import { KDTree } from '../utils/KDTree';
-import { OnlineFingerprintingNode } from './OnlineFingerprintingNode';
 import { DistanceFunction } from './DistanceFunction';
 
 /**
@@ -10,7 +9,7 @@ import { DistanceFunction } from './DistanceFunction';
  *
  * @category Processing node
  */
-export class KNNFingerprintingNode<InOut extends DataFrame> extends OnlineFingerprintingNode<InOut> {
+export class KNNFingerprintingNode<InOut extends DataFrame> extends FingerprintingNode<InOut> {
     protected options: KNNFingerprintingOptions;
     protected kdtree: KDTree;
 
@@ -18,6 +17,7 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends OnlineFinger
         super(options);
 
         // Default options
+        this.options.locked = this.options['locked'] !== undefined ? this.options['locked'] : true;
         this.options.k = this.options.k || 1;
         this.options.similarityFunction = this.options.similarityFunction || DistanceFunction.EUCLIDEAN;
         this.options.weightFunction = this.options.weightFunction || WeightFunction.DEFAULT;
@@ -40,10 +40,7 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends OnlineFinger
             // used for the fingerprinting
             this.cachedReferences.forEach((relativeObject) => {
                 if (!dataObject.hasRelativePosition(relativeObject)) {
-                    dataObject.addRelativePosition(new RelativeValue(
-                        relativeObject,
-                        this.serviceOptions.defaultValue
-                    ));
+                    dataObject.addRelativePosition(new RelativeValue(relativeObject, this.serviceOptions.defaultValue));
                 }
             });
 

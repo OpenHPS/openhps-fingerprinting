@@ -1,6 +1,6 @@
 import { Absolute2DPosition, AbsolutePosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation, RelativeRSSIPosition, RelativeValue } from "@openhps/core";
 import { CSVDataSource } from '@openhps/csv';
-import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, OfflineFingerprintingNode, WeightFunction } from "../../../src";
+import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, FingerprintingNode, WeightFunction } from "../../../src";
 import { expect } from "chai";
 import { EvaluationDataFrame } from "../../mock/data/EvaluationDataFrame";
 
@@ -82,7 +82,7 @@ describe('dataset ipin2021', () => {
     
             algorithm = new KNNFingerprintingNode({
                 weighted: true,
-                k: 5,
+                k: 2,
                 weightFunction: WeightFunction.DEFAULT,
                 similarityFunction: DistanceFunction.EUCLIDEAN
             });
@@ -91,7 +91,7 @@ describe('dataset ipin2021', () => {
                 .addService(service)
                 .addShape(GraphBuilder.create()
                     .from(trainData)
-                    .via(new OfflineFingerprintingNode())
+                    .via(new FingerprintingNode())
                     .to())
                 .addShape(GraphBuilder.create()
                     .from(testDataMean)
@@ -145,6 +145,7 @@ describe('dataset ipin2021', () => {
                     // Accurate control location
                     const expectedLocation = data.evaluationObjects.get('phone').position as Absolute2DPosition;
                     errors.push(expectedLocation.distanceTo(calculatedLocation));
+                    console.log(expectedLocation.toVector3(), calculatedLocation.toVector3())
                 };
 
                 // Perform a pull
@@ -158,7 +159,6 @@ describe('dataset ipin2021', () => {
                         Math.min(...errors),
                         errors.reduce((a, b) => a + b, 0) / errors.length
                     ];
-                    console.log(stats)
                     expect(stats[0]).to.be.lessThan(10.15);
                     expect(stats[1]).to.be.lessThan(0.20);
                     expect(stats[2]).to.be.lessThan(12.42);

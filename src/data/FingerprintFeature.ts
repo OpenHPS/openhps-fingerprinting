@@ -1,4 +1,10 @@
-import { RelativePosition, SerializableObject, SerializableMember, SerializableArrayMember, DataSerializer } from '@openhps/core';
+import {
+    RelativePosition,
+    SerializableObject,
+    SerializableMember,
+    SerializableArrayMember,
+    DataSerializer,
+} from '@openhps/core';
 
 /**
  * Relative value to another reference object.
@@ -6,7 +12,7 @@ import { RelativePosition, SerializableObject, SerializableMember, SerializableA
  * @category Position
  */
 @SerializableObject()
-export class FingerprintValue implements RelativePosition<number[]> {
+export class FingerprintFeature implements RelativePosition<number[]> {
     /**
      * Position recording timestamp
      */

@@ -18,7 +18,7 @@ import {
     WeightFunction,
     Fingerprint,
     FingerprintService,
-    OfflineFingerprintingNode,
+    FingerprintingNode,
     KNNFingerprintingNode,
 } from '../../../src/';
 
@@ -75,7 +75,7 @@ describe('dataset', () => {
                         return dataFrame;
                     }),
                 )
-                .via(new OfflineFingerprintingNode())
+                .via(new FingerprintingNode())
                 .to(new CallbackSinkNode())
                 .build()
                 .then((model) => {

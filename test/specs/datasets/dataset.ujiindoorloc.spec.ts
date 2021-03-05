@@ -18,7 +18,7 @@ import {
     FingerprintService,
     Fingerprint,
     KNNFingerprintingNode,
-    OfflineFingerprintingNode,
+    FingerprintingNode,
     DistanceFunction
 } from '../../../src/';
 
@@ -54,7 +54,7 @@ describe('dataset', () => {
                     }
                     return new DataFrame(phone);
                 }))
-                .via(new OfflineFingerprintingNode())
+                .via(new FingerprintingNode())
                 .to(new CallbackSinkNode())
                 .build().then(m => {
                     offlineModel = m;

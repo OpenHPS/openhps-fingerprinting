@@ -13,7 +13,7 @@ import { FingerprintingOptions, FingerprintService } from '../service/Fingerprin
  *
  * @category Processing node
  */
-export abstract class FingerprintingNode<
+export class FingerprintingNode<
     InOut extends DataFrame,
     F extends Fingerprint = Fingerprint
 > extends ObjectProcessingNode<InOut> {
@@ -56,6 +56,18 @@ export abstract class FingerprintingNode<
         return this.service.cachedReferences;
     }
 
+    public processObject(dataObject: DataObject, dataFrame: InOut): Promise<DataObject> {
+        return new Promise((resolve, reject) => {
+            if (dataObject.position !== undefined && !this.options.locked) {
+                this.offlineFingerprinting(dataObject, dataFrame).then(resolve).catch(reject);
+            } else if (dataObject.relativePositions.length > 0) {
+                this.onlineFingerprinting(dataObject, dataFrame).then(resolve).catch(reject);
+            } else {
+                resolve(dataObject);
+            }
+        });
+    }
+
     /**
      * Online fingerprinting
      *  Use relative positions to retrieve a position.
@@ -63,7 +75,11 @@ export abstract class FingerprintingNode<
      * @param {DataObject} dataObject Data object to reverse fingerprint
      * @param {DataFrame} dataFrame Data frame this data object was included in
      */
-    protected abstract onlineFingerprinting(dataObject: DataObject, dataFrame: InOut): Promise<DataObject>;
+    protected onlineFingerprinting(dataObject: DataObject, dataFrame: InOut): Promise<DataObject> {
+        return new Promise((resolve) => {
+            resolve(dataObject);
+        });
+    }
 
     /**
      * Offline fingerprinting
@@ -73,7 +89,36 @@ export abstract class FingerprintingNode<
      * @param {DataFrame} dataFrame Data frame this data object was included in
      * @returns {Promise<DataObject>} Data object promise
      */
-    protected abstract offlineFingerprinting(dataObject: DataObject, dataFrame: InOut): Promise<DataObject>;
+    protected offlineFingerprinting(dataObject: DataObject, dataFrame: InOut): Promise<DataObject> {
+        return new Promise((resolve, reject) => {
+            // Create a fingerprint at the current position
+            const fingerprint = new Fingerprint();
+            fingerprint.source = dataObject;
+            fingerprint.createdTimestamp = dataFrame.createdTimestamp;
+            fingerprint.position = dataObject.position;
+            fingerprint.classifier = this.serviceOptions.classifier;
+
+            // Add relative positions that will define the fingerprint
+            dataObject.relativePositions.filter(this.options.valueFilter).forEach((relativePosition) => {
+                // Do not add relative position if reference value is unusable
+                if (relativePosition.referenceValue !== undefined && !isNaN(relativePosition.referenceValue)) {
+                    fingerprint.addRelativePosition(relativePosition);
+                }
+            });
+
+            if (fingerprint.relativePositions.length > 0) {
+                // Store the fingerprint
+                this.service
+                    .insertObject(fingerprint as any)
+                    .then(() => {
+                        resolve(dataObject);
+                    })
+                    .catch(reject);
+            } else {
+                resolve(dataObject);
+            }
+        });
+    }
 
     public on(name: string | symbol, listener: (...args: any[]) => void): this;
     /**
@@ -90,6 +135,7 @@ export abstract class FingerprintingNode<
 }
 
 export interface FingerprintingNodeOptions extends ObjectProcessingNodeOptions {
+    locked?: boolean;
     /**
      * Fingerprint classifier
      *

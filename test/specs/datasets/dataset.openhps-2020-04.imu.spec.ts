@@ -16,7 +16,7 @@ import {
     FingerprintService,
     Fingerprint,
     KNNFingerprintingNode,
-    OfflineFingerprintingNode
+    FingerprintingNode
 } from '../../../src/';
 
 describe('dataset', () => {
@@ -66,7 +66,7 @@ describe('dataset', () => {
                         return dataFrame;
                     }),
                 )
-                .via(new OfflineFingerprintingNode({
+                .via(new FingerprintingNode({
                     objectFilter: (object: DataObject) => object.uid === 'phone',
                 }))
                 .to(new CallbackSinkNode())

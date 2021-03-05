@@ -1,2 +1,2 @@
 export * from './Fingerprint';
-export * from './FingerprintValue';
+export * from './FingerprintFeature';

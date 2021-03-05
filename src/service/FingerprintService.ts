@@ -13,7 +13,8 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
         super(dataServiceDriver);
         this.options = options || {};
         this.name = this.options.classifier.length > 0 ? this.options.classifier : this.name;
-        this.options.aggFn = this.options.aggFn || ((values: number[]) => values.reduce((a, b) => a + b) / values.length);
+        this.options.aggFn =
+            this.options.aggFn || ((values: number[]) => values.reduce((a, b) => a + b) / values.length);
         this.once('ready', this.update.bind(this));
     }
 
@@ -61,9 +62,6 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
                     this.cachedReferences = new Set();
 
                     fingerprints.forEach((fingerprint) => {
-                        // Extract features
-                        fingerprint.relativePositions = this.featureExtraction(fingerprint.relativePositions);
-                        
                         // Cache all known reference objects
                         fingerprint.relativePositions.forEach((relativePosition) => {
                             if (!this.cachedReferences.has(relativePosition.referenceObjectUID))
@@ -104,21 +102,13 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
                 // Complete missing references
                 this.cachedReferences.forEach((relativeObject) => {
                     if (!fingerprint.hasRelativePosition(relativeObject)) {
-                        fingerprint.addRelativePosition(
-                            new RelativeValue(
-                                    relativeObject, 
-                                    this.options.defaultValue
-                                ));
+                        fingerprint.addRelativePosition(new RelativeValue(relativeObject, this.options.defaultValue));
                     }
                 });
                 fingerprint.computeVector(this.options.aggFn);
                 this.cache.push(fingerprint);
             });
         }
-    }
-
-    protected featureExtraction(rel: Array<RelativeValue>): Array<RelativeValue> {
-        return rel;
     }
 }
 

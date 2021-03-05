@@ -1,6 +1,6 @@
 import { SerializableMember, SerializableObject, DataObject, RelativePosition } from '@openhps/core';
 import { v4 as uuidv4 } from 'uuid';
-import { FingerprintValue } from './FingerprintValue';
+import { FingerprintFeature } from './FingerprintFeature';
 
 @SerializableObject()
 export class Fingerprint extends DataObject {
@@ -15,8 +15,8 @@ export class Fingerprint extends DataObject {
     }
 
     public addRelativePosition(rel: RelativePosition<any>): void {
-        if (rel instanceof FingerprintValue) {
-            rel.referenceValue.forEach(val => {
+        if (rel instanceof FingerprintFeature) {
+            rel.referenceValue.forEach((val) => {
                 this.addValue(rel.referenceObjectUID, val);
             });
         } else {
@@ -25,9 +25,9 @@ export class Fingerprint extends DataObject {
     }
 
     public addValue(key: string, value: number): void {
-        let fingerprintValue: FingerprintValue = this.getRelativePosition(key);
+        let fingerprintValue: FingerprintFeature = this.getRelativePosition(key);
         if (!fingerprintValue) {
-            fingerprintValue = new FingerprintValue(key, []);
+            fingerprintValue = new FingerprintFeature(key, []);
             super.addRelativePosition(fingerprintValue);
         }
         fingerprintValue.referenceValue.push(value);
@@ -52,10 +52,10 @@ export class Fingerprint extends DataObject {
         this.vector = [];
         super.relativePositions
             // Sort alphabetically
-            .sort((a: FingerprintValue, b: FingerprintValue) =>
+            .sort((a: FingerprintFeature, b: FingerprintFeature) =>
                 a.referenceObjectUID.localeCompare(b.referenceObjectUID),
             )
-            .map((rel: FingerprintValue) => {
+            .map((rel: FingerprintFeature) => {
                 this.vector.push(aggFn(rel.referenceValue, rel.referenceObjectUID));
             });
     }
