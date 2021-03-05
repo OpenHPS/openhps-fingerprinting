@@ -1,4 +1,4 @@
-import { Absolute2DPosition, AbsolutePosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation, RelativeRSSIPosition } from "@openhps/core";
+import { Absolute2DPosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation, RelativeRSSIPosition } from "@openhps/core";
 import { CSVDataSource } from '@openhps/csv';
 import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, FingerprintingNode, WeightFunction } from "../../../src";
 import { expect } from "chai";
@@ -230,9 +230,14 @@ describe('dataset ipin2021', () => {
                     sequentialPull: false,
                     sourceNode: "test-data-mean"
                 }).then(() => {
-                    expect(Math.max(...errors)).to.be.lessThan(10.15);
-                    expect(Math.min(...errors)).to.be.lessThan(0.20);
-                    expect(errors.reduce((a, b) => a + b) / errors.length).to.be.lessThan(12.42);
+                    const stats = {
+                        maxError: Math.max(...errors),
+                        minError: Math.min(...errors),
+                        avgError: errors.reduce((a, b) => a + b) / errors.length,
+                    };
+                    expect(stats.maxError).to.be.lessThan(8);
+                    expect(stats.minError).to.be.lessThan(0.05);
+                    expect(stats.avgError).to.be.lessThan(2.50);
                     done();
                 }).catch(done);
             });

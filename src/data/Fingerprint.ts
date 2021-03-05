@@ -17,14 +17,14 @@ export class Fingerprint extends DataObject {
     public addRelativePosition(rel: RelativePosition<any>): void {
         if (rel instanceof FingerprintFeature) {
             rel.referenceValue.forEach((val) => {
-                this.addValue(rel.referenceObjectUID, val);
+                this.addFeature(rel.referenceObjectUID, val);
             });
         } else {
-            this.addValue(rel.referenceObjectUID, rel.referenceValue);
+            this.addFeature(rel.referenceObjectUID, rel.referenceValue);
         }
     }
 
-    public addValue(key: string, value: number): void {
+    public addFeature(key: string, value: number): void {
         let fingerprintValue: FingerprintFeature = this.getRelativePosition(key);
         if (!fingerprintValue) {
             fingerprintValue = new FingerprintFeature(key, []);

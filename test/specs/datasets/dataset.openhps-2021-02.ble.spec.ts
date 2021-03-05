@@ -193,7 +193,7 @@ describe('dataset ipin2021', () => {
                     sequentialPull: false,
                     sourceNode: "test-data-mean"
                 }).then(() => {
-                    expect(Math.max(...errors)).to.be.lessThan(29);
+                    expect(Math.max(...errors)).to.be.lessThan(30);
                     expect(Math.min(...errors)).to.be.lessThan(0.4);
                     expect(errors.reduce((a, b) => a + b) / errors.length).to.be.lessThan(5);
                     done();

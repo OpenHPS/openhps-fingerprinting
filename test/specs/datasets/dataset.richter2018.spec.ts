@@ -633,12 +633,12 @@ describe('dataset', () => {
                                 const rssi = rssiVector[i];
                                 const distance = rssiToDistance(rssi);
                                 const relativeLocation = fingerprint.relativePositions[i];
-                                expect(distance).to.equal(relativeLocation.referenceValue);
+                                expect(distance).to.equal(relativeLocation.referenceValue[0]);
                             }
                             return done();
                         }
                     });
-                });
+                }).catch(done);
             }).timeout(10000);
         });
 

@@ -48,7 +48,7 @@ stored and preprocessed fingerprints to reverse an objects relative positions to
 import { ModelBuilder, GraphBuilder } from '@openhps/core';
 import { 
     FingerprintService,         // Pre processes fingerprints
-    OfflineFingerprintingNode,  // Stores fingerprints
+    FingerprintingNode,         // Stores fingerprints
     KNNFingerprintingNode,      // Reverse fingerprinting
     WeightFunction,
     DistanceFunction
@@ -62,7 +62,7 @@ ModelBuilder.create()
     }))
     .addShape(GraphBuilder.create() // Offline stage
         .from(/* ... */)
-        .via(new OfflineFingerprintingNode())
+        .via(new FingerprintingNode())
         .to(/* ... */))
     .addShape(GraphBuilder.create() // Online stage
         .from(/* ... */)
