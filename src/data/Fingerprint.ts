@@ -1,4 +1,4 @@
-import { SerializableMember, SerializableObject, DataObject, RelativePosition } from '@openhps/core';
+import { SerializableMember, SerializableObject, DataObject, SerializableMapMember } from '@openhps/core';
 import { v4 as uuidv4 } from 'uuid';
 import { FingerprintFeature } from './FingerprintFeature';
 
@@ -9,28 +9,35 @@ export class Fingerprint extends DataObject {
     public classifier: string;
     @SerializableMember()
     public processed: boolean;
+    @SerializableMapMember(String, FingerprintFeature)
+    public features: Map<string, FingerprintFeature> = new Map();
 
     constructor(displayName?: string) {
         super(uuidv4(), displayName);
     }
 
-    public addRelativePosition(rel: RelativePosition<any>): void {
-        if (rel instanceof FingerprintFeature) {
-            rel.referenceValue.forEach((val) => {
-                this.addFeature(rel.referenceObjectUID, val);
-            });
-        } else {
-            this.addFeature(rel.referenceObjectUID, rel.referenceValue);
-        }
+    /**
+     * Check if a fingerprint has a feature
+     *
+     * @param {string} key Feature key
+     * @returns {boolean} Existance of feature
+     */
+    public hasFeature(key: string): boolean {
+        return this.features.has(key);
     }
 
-    public addFeature(key: string, value: number): void {
-        let fingerprintValue: FingerprintFeature = this.getRelativePosition(key);
-        if (!fingerprintValue) {
-            fingerprintValue = new FingerprintFeature(key, []);
-            super.addRelativePosition(fingerprintValue);
-        }
-        fingerprintValue.referenceValue.push(value);
+    /**
+     * Add a feature to the fingerprint
+     *
+     * @param {string} key Feature key
+     * @param {number} value Feature value
+     * @returns {Fingerprint} instance
+     */
+    public addFeature(key: string, value: number): this {
+        const feature: FingerprintFeature = this.features.get(key) || new FingerprintFeature(key);
+        feature.values.push(value);
+        this.features.set(key, feature);
+        return this;
     }
 
     /**
@@ -50,13 +57,12 @@ export class Fingerprint extends DataObject {
      */
     public computeVector(aggFn: (values: number[], key?: string) => number): void {
         this.vector = [];
-        super.relativePositions
+        Array.from(this.features.values())
             // Sort alphabetically
-            .sort((a: FingerprintFeature, b: FingerprintFeature) =>
-                a.referenceObjectUID.localeCompare(b.referenceObjectUID),
-            )
-            .map((rel: FingerprintFeature) => {
-                this.vector.push(aggFn(rel.referenceValue, rel.referenceObjectUID));
+            .sort((a, b) => a.key.localeCompare(b.key))
+            .forEach((feature) => {
+                this.vector.push(aggFn(feature.values, feature.key));
             });
+        this.processed = true;
     }
 }

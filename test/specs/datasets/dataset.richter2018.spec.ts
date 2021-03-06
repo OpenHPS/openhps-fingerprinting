@@ -628,12 +628,12 @@ describe('dataset', () => {
                     fingerprints.forEach((fingerprint) => {
                         const location = fingerprint.position as Absolute3DPosition;
                         if (location.x === 227.94 && location.y === 142.04 && location.z === 0) {
-                            expect(rssiVector.length).to.equal(fingerprint.relativePositions.length);
+                            expect(rssiVector.length).to.equal(fingerprint.features.size);
                             for (let i = 0; i < rssiVector.length; i++) {
                                 const rssi = rssiVector[i];
                                 const distance = rssiToDistance(rssi);
-                                const relativeLocation = fingerprint.relativePositions[i];
-                                expect(distance).to.equal(relativeLocation.referenceValue[0]);
+                                const relativeLocation = Array.from(fingerprint.features.values())[i];
+                                expect(distance).to.equal(relativeLocation.values[0]);
                             }
                             return done();
                         }

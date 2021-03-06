@@ -74,6 +74,7 @@ export class FingerprintingNode<
      *
      * @param {DataObject} dataObject Data object to reverse fingerprint
      * @param {DataFrame} dataFrame Data frame this data object was included in
+     * @returns {Promise<DataObject>} Promise of data object
      */
     protected onlineFingerprinting(dataObject: DataObject, dataFrame: InOut): Promise<DataObject> {
         return new Promise((resolve) => {
@@ -99,14 +100,14 @@ export class FingerprintingNode<
             fingerprint.classifier = this.serviceOptions.classifier;
 
             // Add relative positions that will define the fingerprint
-            dataObject.relativePositions.filter(this.options.valueFilter).forEach((relativePosition) => {
+            dataObject.relativePositions.filter(this.options.valueFilter).forEach((rel) => {
                 // Do not add relative position if reference value is unusable
-                if (relativePosition.referenceValue !== undefined && !isNaN(relativePosition.referenceValue)) {
-                    fingerprint.addRelativePosition(relativePosition);
+                if (rel.referenceValue !== undefined && !isNaN(rel.referenceValue)) {
+                    fingerprint.addFeature(rel.referenceObjectUID, rel.referenceValue);
                 }
             });
 
-            if (fingerprint.relativePositions.length > 0) {
+            if (fingerprint.features.size > 0) {
                 // Store the fingerprint
                 this.service
                     .insertObject(fingerprint as any)

@@ -47,13 +47,13 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
             const dataObjectPoint: number[] = [];
             dataObject.relativePositions
                 // Filter out unneeded relative positions
-                .filter((relativePosition) => this.cachedReferences.has(relativePosition.referenceObjectUID))
+                .filter((rel) => this.cachedReferences.has(rel.referenceObjectUID))
                 // Sort alphabetically
                 .sort((a: RelativePosition, b: RelativePosition) =>
                     a.referenceObjectUID.localeCompare(b.referenceObjectUID),
                 )
-                .forEach((relativePosition) => {
-                    dataObjectPoint.push(relativePosition.referenceValue);
+                .forEach((rel) => {
+                    dataObjectPoint.push(rel.referenceValue);
                 });
 
             // Perform reverse fingerprinting

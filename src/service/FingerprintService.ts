@@ -1,4 +1,4 @@
-import { AbsolutePosition, RelativePosition, RelativeValue, DataObjectService, DataServiceDriver } from '@openhps/core';
+import { AbsolutePosition, DataObjectService, DataServiceDriver } from '@openhps/core';
 import { Fingerprint } from '../data';
 
 /**
@@ -63,17 +63,16 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
 
                     fingerprints.forEach((fingerprint) => {
                         // Cache all known reference objects
-                        fingerprint.relativePositions.forEach((relativePosition) => {
-                            if (!this.cachedReferences.has(relativePosition.referenceObjectUID))
-                                this.cachedReferences.add(relativePosition.referenceObjectUID);
+                        fingerprint.features.forEach((_, key) => {
+                            if (!this.cachedReferences.has(key)) this.cachedReferences.add(key);
                         });
 
                         // Append fingerprint value
                         const group = JSON.stringify(this.options.groupBy(fingerprint.position));
                         if (processed.has(group)) {
                             const existingFingerprint = processed.get(group);
-                            fingerprint.relativePositions.forEach((relativePosition) => {
-                                existingFingerprint.addRelativePosition(relativePosition);
+                            fingerprint.features.forEach((feature) => {
+                                existingFingerprint.addFeature(feature.key, feature.values[0]);
                             });
                         } else {
                             processed.set(group, fingerprint);
@@ -101,8 +100,8 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
             fingerprints.forEach((fingerprint) => {
                 // Complete missing references
                 this.cachedReferences.forEach((relativeObject) => {
-                    if (!fingerprint.hasRelativePosition(relativeObject)) {
-                        fingerprint.addRelativePosition(new RelativeValue(relativeObject, this.options.defaultValue));
+                    if (!fingerprint.hasFeature(relativeObject)) {
+                        fingerprint.addFeature(relativeObject, this.options.defaultValue);
                     }
                 });
                 fingerprint.computeVector(this.options.aggFn);
