@@ -53,7 +53,7 @@ export class Fingerprint extends DataObject {
     /**
      * Compute the relative position vector from the relative positions
      *
-     * @param {(values: number[], key?: string) => number} aggFn Aggregation function
+     * @param {Function} aggFn Aggregation function
      */
     public computeVector(aggFn: (values: number[], key?: string) => number): void {
         this.vector = [];
