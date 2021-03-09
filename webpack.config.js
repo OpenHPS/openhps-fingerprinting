@@ -1,3 +1,4 @@
+const TerserPlugin = require('terser-webpack-plugin');
 const PROJECT_NAME = "openhps-fingerprinting";
 const LIBRARY_NAME = "@openhps/fingerprinting";
 
@@ -18,26 +19,26 @@ module.exports = env => [
       umdNamedDefine: true,
       globalObject: `(typeof self !== 'undefined' ? self : this)`,
     },
-    resolve: {
-      alias: {
-        typescript: false,
-      },
-      fallback: {
-        path: false,
-        fs: false,
-        os: false,
-      }
-    },
     optimization: {
       minimize: env.prod,
+      minimizer: [
+        new TerserPlugin({
+          cache: true,
+          parallel: true,
+          sourceMap: true,
+          terserOptions: {
+            keep_classnames: true,
+          }
+        })
+      ],
       portableRecords: true,
       usedExports: true,
       providedExports: true
     },
     performance: {
       hints: false,
-      maxEntrypointSize: 512000,
-      maxAssetSize: 512000
+      maxEntrypointSize: 300000,
+      maxAssetSize: 300000
     }
   }
 ];
