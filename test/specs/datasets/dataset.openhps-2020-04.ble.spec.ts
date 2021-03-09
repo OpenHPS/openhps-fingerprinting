@@ -8,7 +8,8 @@ import {
     ModelBuilder,
     DataObject,
     Absolute3DPosition,
-    RelativeRSSIPosition,
+    RelativeRSSI,
+    RFTransmitterObject,
 } from '@openhps/core';
 import { CSVDataSource } from '@openhps/csv';
 import { EvaluationDataFrame } from '../../mock/data/EvaluationDataFrame';
@@ -55,11 +56,9 @@ describe('dataset', () => {
                             if (prop.indexOf('BEACON_') !== -1) {
                                 const value = parseFloat(row[prop]);
                                 if (value !== 100) {
-                                    const object = new DataObject(prop);
+                                    const object = new RFTransmitterObject(prop);
                                     dataFrame.addObject(object);
-                                    const relativeLocation = new RelativeRSSIPosition(object, value);
-                                    relativeLocation.calibratedRSSI = -68;
-                                    relativeLocation.environmenFactor = 2.2;
+                                    const relativeLocation = new RelativeRSSI(object, value);
                                     phoneObject.addRelativePosition(relativeLocation);
                                 }
                             }
@@ -103,11 +102,9 @@ describe('dataset', () => {
                                 if (prop.indexOf('BEACON_') !== -1) {
                                     const value = parseFloat(row[prop]);
                                     if (value !== 100) {
-                                        const object = new DataObject(prop);
+                                        const object = new RFTransmitterObject(prop);
                                         dataFrame.addObject(object);
-                                        const relativeLocation = new RelativeRSSIPosition(object, value);
-                                        relativeLocation.calibratedRSSI = -68;
-                                        relativeLocation.environmenFactor = 2.2;
+                                        const relativeLocation = new RelativeRSSI(object, value);
                                         phoneObject.addRelativePosition(relativeLocation);
                                     }
                                 }

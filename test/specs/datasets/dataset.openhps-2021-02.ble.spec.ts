@@ -1,4 +1,4 @@
-import { Absolute2DPosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation, RelativeRSSIPosition } from "@openhps/core";
+import { Absolute2DPosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation, RelativeRSSI } from "@openhps/core";
 import { CSVDataSource } from '@openhps/csv';
 import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, FingerprintingNode, WeightFunction } from "../../../src";
 import { expect } from "chai";
@@ -38,7 +38,7 @@ describe('dataset ipin2021', () => {
                         if (prop.includes("BEACON_")) {
                             const rssi = parseInt(row[prop]);
                             if (rssi !== 100)
-                                object.addRelativePosition(new RelativeRSSIPosition(
+                                object.addRelativePosition(new RelativeRSSI(
                                     prop, 
                                     rssi));
                         }
@@ -68,7 +68,7 @@ describe('dataset ipin2021', () => {
                         if (prop.includes("BEACON_")) {
                             const rssi = parseInt(row[prop]);
                             if (rssi !== 100)
-                                object.addRelativePosition(new RelativeRSSIPosition(
+                                object.addRelativePosition(new RelativeRSSI(
                                     prop, 
                                     rssi));
                         }
@@ -103,7 +103,7 @@ describe('dataset ipin2021', () => {
                         if (prop.includes("BEACON_")) {
                             const rssi = parseInt(row[prop]);
                             if (rssi !== 100)
-                                object.addRelativePosition(new RelativeRSSIPosition(
+                                object.addRelativePosition(new RelativeRSSI(
                                     prop, 
                                     rssi));
                         }

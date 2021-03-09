@@ -8,7 +8,7 @@ import {
     MemoryDataService,
     ModelBuilder,
     DataObject,
-    RelativeDistancePosition,
+    RelativeDistance,
     Absolute3DPosition,
 } from '@openhps/core';
 import { CSVDataSource } from '@openhps/csv';
@@ -57,7 +57,7 @@ describe('dataset', () => {
                                 if (value !== 100) {
                                     const object = new DataObject(prop);
                                     dataFrame.addObject(object);
-                                    const relativeLocation = new RelativeDistancePosition(object, value);
+                                    const relativeLocation = new RelativeDistance(object, value);
                                     phoneObject.addRelativePosition(relativeLocation);
                                 }
                             }
@@ -102,7 +102,7 @@ describe('dataset', () => {
                                     if (value !== 100) {
                                         const object = new DataObject(prop);
                                         dataFrame.addObject(object);
-                                        const relativeLocation = new RelativeDistancePosition(object, value);
+                                        const relativeLocation = new RelativeDistance(object, value);
                                         phoneObject.addRelativePosition(relativeLocation);
                                     }
                                 }

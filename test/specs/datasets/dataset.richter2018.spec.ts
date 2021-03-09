@@ -9,7 +9,7 @@ import {
     MemoryDataService,
     ModelBuilder,
     DataObject,
-    RelativeDistancePosition,
+    RelativeDistance,
     Absolute3DPosition,
     ObjectMergeNode
 } from '@openhps/core';
@@ -60,7 +60,7 @@ describe('dataset', () => {
                         const distance = rssiToDistance(rssi);
                         const object = new DataObject(ap);
                         dataFrame.addObject(object);
-                        phoneObject.addRelativePosition(new RelativeDistancePosition(object, distance));
+                        phoneObject.addRelativePosition(new RelativeDistance(object, distance));
                     });
                     dataFrame.addObject(phoneObject);
                     return dataFrame;
@@ -657,7 +657,7 @@ describe('dataset', () => {
                                     const distance = rssiToDistance(rssi);
                                     const object = new DataObject(ap);
                                     dataFrame.addObject(object);
-                                    phoneObject.addRelativePosition(new RelativeDistancePosition(object, distance));
+                                    phoneObject.addRelativePosition(new RelativeDistance(object, distance));
                                 });
                                 dataFrame.evaluationObjects = null;
                                 dataFrame.addObject(phoneObject);
@@ -758,7 +758,7 @@ describe('dataset', () => {
                                     const distance = rssiToDistance(rssi);
                                     const object = new DataObject(ap);
                                     dataFrame.addObject(object);
-                                    phoneObject.addRelativePosition(new RelativeDistancePosition(object, distance));
+                                    phoneObject.addRelativePosition(new RelativeDistance(object, distance));
                                 });
                                 dataFrame.evaluationObjects = null;
                                 dataFrame.addObject(phoneObject);

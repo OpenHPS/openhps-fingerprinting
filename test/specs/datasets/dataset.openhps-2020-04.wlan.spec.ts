@@ -9,9 +9,10 @@ import {
     ModelBuilder,
     DataObject,
     Absolute3DPosition,
-    RelativeRSSIPosition,
+    RelativeRSSI,
     Orientation,
-    AngleUnit
+    AngleUnit,
+    RFTransmitterObject
 } from '@openhps/core';
 import { CSVDataSource } from '@openhps/csv';
 import { 
@@ -64,9 +65,9 @@ describe('dataset', () => {
                             if (prop.indexOf('WAP_') !== -1) {
                                 const value = parseFloat(row[prop]);
                                 if (value !== 100) {
-                                    const object = new DataObject(prop);
+                                    const object = new RFTransmitterObject(prop);
                                     dataFrame.addObject(object);
-                                    const relativeLocation = new RelativeRSSIPosition(object, value);
+                                    const relativeLocation = new RelativeRSSI(object, value);
                                     phoneObject.addRelativePosition(relativeLocation);
                                 }
                             }
@@ -111,9 +112,9 @@ describe('dataset', () => {
                                 if (prop.indexOf('WAP_') !== -1) {
                                     const value = parseFloat(row[prop]);
                                     if (value !== 100) {
-                                        const object = new DataObject(prop);
+                                        const object = new RFTransmitterObject(prop);
                                         dataFrame.addObject(object);
-                                        const relativeLocation = new RelativeRSSIPosition(object, value);
+                                        const relativeLocation = new RelativeRSSI(object, value);
                                         phoneObject.addRelativePosition(relativeLocation);
                                     }
                                 }

@@ -6,7 +6,7 @@ import {
     MemoryDataService,
     Model,
     ModelBuilder, 
-    RelativeRSSIPosition
+    RelativeRSSI
 } from "@openhps/core";
 import { 
     CSVDataSource 
@@ -48,7 +48,7 @@ describe('dataset', () => {
                         const accessPoint = `WAP${String(i).padStart(3, "0")}`;
                         const rssi = parseInt(row[accessPoint]);
                         if (rssi !== 100)
-                            phone.addRelativePosition(new RelativeRSSIPosition(
+                            phone.addRelativePosition(new RelativeRSSI(
                                 accessPoint, 
                                 rssi));
                     }
@@ -71,7 +71,7 @@ describe('dataset', () => {
                                 const accessPoint = `WAP${String(i).padStart(3, "0")}`;
                                 const rssi = parseInt(row[accessPoint]);
                                 if (rssi !== 100)
-                                    phone.addRelativePosition(new RelativeRSSIPosition(
+                                    phone.addRelativePosition(new RelativeRSSI(
                                         accessPoint, 
                                         rssi));
                             }

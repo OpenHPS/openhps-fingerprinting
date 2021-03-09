@@ -7,7 +7,7 @@ import {
     DataObject, 
     MemoryDataService, 
     ModelBuilder, 
-    RelativeRSSIPosition, 
+    RelativeRSSI, 
     RelativeValue, 
     RFTransmitterObject 
 } from '@openhps/core';
@@ -61,9 +61,9 @@ describe('node knn fingerprinting', () => {
                 object.addRelativePosition(new RelativeValue("MAG_X", 1));
                 object.addRelativePosition(new RelativeValue("MAG_Y", 2));
                 object.addRelativePosition(new RelativeValue("MAG_Z", 3));
-                object.addRelativePosition(new RelativeRSSIPosition(new RFTransmitterObject("AP_1"), 4));
-                object.addRelativePosition(new RelativeRSSIPosition(new RFTransmitterObject("AP_2"), 5));
-                object.addRelativePosition(new RelativeRSSIPosition(new RFTransmitterObject("AP_3"), 6));
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_1"), 4));
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_2"), 5));
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_3"), 6));
                 const frame = new DataFrame(object);
                 m.onceCompleted(frame.uid).then(() => {
                     const node1 = m.findNodeByName("geomagnetic-fingerprinting") as KNNFingerprintingNode<any>;
