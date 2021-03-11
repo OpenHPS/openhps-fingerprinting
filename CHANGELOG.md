@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.1.0-alpha.8 (2021-03-11)
+
+
+### Bug Fixes
+
+* rrate_z incorrect ([9e039eb](https://github.com/OpenHPS/openhps-fingerprinting/commit/9e039eb1be4a7afff56ed8202f592aa052a1727a))
+* webpack minimizer issue ([22d1d94](https://github.com/OpenHPS/openhps-fingerprinting/commit/22d1d949ee8401f2e3af1420656aeac6108b90b6))
+
 ## 0.1.0-alpha.7 (2021-03-09)
 
 
