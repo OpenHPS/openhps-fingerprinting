@@ -185,6 +185,7 @@ describe('dataset ipin2021', () => {
                     // Accurate control location
                     const expectedLocation = data.evaluationObjects.get('phone').position as Absolute2DPosition;
                     errors.push(expectedLocation.distanceTo(calculatedLocation));
+                    console.log(calculatedLocation.accuracy, errors[errors.length - 1]);
                 };
 
                 // Perform a pull
