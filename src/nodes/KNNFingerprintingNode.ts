@@ -34,7 +34,7 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
         }
     }
 
-    protected onlineFingerprinting(dataObject: DataObject): Promise<DataObject> {
+    protected onlineFingerprinting(dataObject: DataObject, dataFrame: DataFrame): Promise<DataObject> {
         return new Promise((resolve) => {
             // Make sure the object has a relative position to all reference objects
             // used for the fingerprinting
@@ -94,6 +94,7 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
             // Set a new position
             const newPosition = results[0][0].clone();
             newPosition.fromVector(point);
+            newPosition.timestamp = dataFrame.createdTimestamp;
             dataObject.setPosition(newPosition);
             resolve(dataObject);
         });
