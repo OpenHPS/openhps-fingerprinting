@@ -34,7 +34,7 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
         }
     }
 
-    protected onlineFingerprinting(dataObject: DataObject): Promise<DataObject> {
+    protected onlineFingerprinting(dataObject: DataObject, dataFrame: DataFrame): Promise<DataObject> {
         return new Promise((resolve) => {
             // Make sure the object has a relative position to all reference objects
             // used for the fingerprinting
@@ -84,7 +84,7 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
                 let scale = 0;
                 results.forEach((sortedFingerprint) => {
                     const weight = this.options.weightFunction(sortedFingerprint[1]);
-                    scale += this.options.weightFunction(sortedFingerprint[1]);
+                    scale += weight;
                     point.add(sortedFingerprint[0].toVector3().multiplyScalar(weight));
                 });
                 point.divideScalar(scale);
@@ -92,12 +92,13 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
                 results.forEach((sortedFingerprint) => {
                     point.add(sortedFingerprint[0].toVector3());
                 });
-                point.multiplyScalar(1 / this.options.k);
+                point.divideScalar(this.options.k);
             }
 
             // Set a new position
             const newPosition = results[0][0].clone();
             newPosition.fromVector(point);
+            newPosition.timestamp = dataFrame.createdTimestamp;
             dataObject.setPosition(newPosition);
             resolve(dataObject);
         });
