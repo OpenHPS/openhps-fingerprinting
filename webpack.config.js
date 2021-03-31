@@ -1,8 +1,9 @@
 const TerserPlugin = require('terser-webpack-plugin');
-const PROJECT_NAME = "openhps-fingerprinting";
-const LIBRARY_NAME = "@openhps/fingerprinting";
-
 const path = require('path');
+const pkg = require("./package.json");
+
+const LIBRARY_NAME = pkg.name;
+const PROJECT_NAME = pkg.name.replace("@", "").replace("/", "-");
 
 module.exports = env => [
   {

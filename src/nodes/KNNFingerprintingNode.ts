@@ -56,6 +56,10 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
                     dataObjectPoint.push(rel.referenceValue);
                 });
 
+            if (dataObjectPoint.length === 0) {
+                return resolve(dataObject);
+            }
+
             // Perform reverse fingerprinting
             let results = new Array<[AbsolutePosition, number]>();
             if (this.options.naive) {
