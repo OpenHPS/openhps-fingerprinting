@@ -36,18 +36,23 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
 
     protected onlineFingerprinting(dataObject: DataObject, dataFrame: DataFrame): Promise<DataObject> {
         return new Promise((resolve) => {
+            const filteredReferences = dataObject.relativePositions
+                // Filter out unneeded relative positions
+                .filter((rel) => this.cachedReferences.has(rel.referenceObjectUID));
+            if (filteredReferences.length === 0) {
+                return resolve(dataObject);
+            }
+
             // Make sure the object has a relative position to all reference objects
             // used for the fingerprinting
             this.cachedReferences.forEach((relativeObject) => {
                 if (!dataObject.hasRelativePosition(relativeObject)) {
-                    dataObject.addRelativePosition(new RelativeValue(relativeObject, this.serviceOptions.defaultValue));
+                    filteredReferences.push(new RelativeValue(relativeObject, this.serviceOptions.defaultValue));
                 }
             });
 
             const dataObjectPoint: number[] = [];
-            dataObject.relativePositions
-                // Filter out unneeded relative positions
-                .filter((rel) => this.cachedReferences.has(rel.referenceObjectUID))
+            filteredReferences
                 // Sort alphabetically
                 .sort((a: RelativePosition, b: RelativePosition) =>
                     a.referenceObjectUID.localeCompare(b.referenceObjectUID),
@@ -55,10 +60,6 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
                 .forEach((rel) => {
                     dataObjectPoint.push(rel.referenceValue);
                 });
-
-            if (dataObjectPoint.length === 0) {
-                return resolve(dataObject);
-            }
 
             // Perform reverse fingerprinting
             let results = new Array<[AbsolutePosition, number]>();
