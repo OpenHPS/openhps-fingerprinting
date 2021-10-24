@@ -1,8 +1,9 @@
 import { FingerprintingNode, FingerprintingNodeOptions } from './FingerprintingNode';
-import { DataFrame, DataObject, RelativePosition, AbsolutePosition, Vector3, RelativeValue } from '@openhps/core';
+import { DataFrame, DataObject, RelativePosition, AbsolutePosition, Vector3 } from '@openhps/core';
 import { WeightFunction } from './WeightFunction';
 import { KDTree } from '../utils/KDTree';
 import { DistanceFunction } from './DistanceFunction';
+import { RelativeValue } from '../data/RelativeValue';
 
 /**
  * KNN Fingerprinting processing node

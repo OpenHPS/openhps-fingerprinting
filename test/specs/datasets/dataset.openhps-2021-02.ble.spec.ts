@@ -1,8 +1,11 @@
-import { Absolute2DPosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation, RelativeRSSI } from "@openhps/core";
+import { Absolute2DPosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation } from "@openhps/core";
 import { CSVDataSource } from '@openhps/csv';
 import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, FingerprintingNode, WeightFunction } from "../../../src";
 import { expect } from "chai";
 import { EvaluationDataFrame } from "../../mock/data/EvaluationDataFrame";
+import {
+    RelativeRSSI,
+} from '@openhps/rf';
 
 describe('dataset ipin2021', () => {
     describe('ble fingerprinting dataset', () => {
@@ -150,8 +153,8 @@ describe('dataset ipin2021', () => {
         });
     
         it('should process the fingerprints for 4 orientations', (done) => {
-            service.options.groupBy = (pos) => 
-                JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation });
+            service.options.groupBy = (pos) => {
+                return JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation.toArray() })};
             service.update().then(() => {
                 expect(service.cache.length).to.equal(412);
                 done();
@@ -170,7 +173,7 @@ describe('dataset ipin2021', () => {
 
             before((done) => {
                 service.options.groupBy = (pos) => 
-                    JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation });
+                    JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation.toArray() });
                 service.update().then(() => {
                     return testDataMean.reset();
                 }).then(() => {

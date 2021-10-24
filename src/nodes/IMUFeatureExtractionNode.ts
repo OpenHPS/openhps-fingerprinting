@@ -1,4 +1,6 @@
-import { DataFrame, IMUDataFrame, ProcessingNode, ProcessingNodeOptions, RelativeValue } from '@openhps/core';
+import { DataFrame, ProcessingNode, ProcessingNodeOptions } from '@openhps/core';
+import { IMUDataFrame } from '@openhps/imu';
+import { RelativeValue } from '../data/RelativeValue';
 
 export class IMUFeatureExtractionNode<InOut extends IMUDataFrame> extends ProcessingNode<InOut> {
     constructor(options?: ProcessingNodeOptions) {

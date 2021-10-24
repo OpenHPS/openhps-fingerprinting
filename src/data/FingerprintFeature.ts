@@ -3,9 +3,9 @@ import { SerializableArrayMember, SerializableMember, SerializableObject } from 
 @SerializableObject()
 export class FingerprintFeature {
     @SerializableMember()
-    public key: string;
+    key: string;
     @SerializableArrayMember(Number)
-    public values: number[] = [];
+    values: number[] = [];
 
     constructor(key?: string) {
         this.key = key;

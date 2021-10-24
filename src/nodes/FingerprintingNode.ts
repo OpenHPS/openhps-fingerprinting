@@ -15,7 +15,7 @@ import { FingerprintingOptions, FingerprintService } from '../service/Fingerprin
  */
 export class FingerprintingNode<
     InOut extends DataFrame,
-    F extends Fingerprint = Fingerprint
+    F extends Fingerprint = Fingerprint,
 > extends ObjectProcessingNode<InOut> {
     protected options: FingerprintingNodeOptions;
     protected service: FingerprintService<F>;
@@ -44,19 +44,19 @@ export class FingerprintingNode<
         return;
     }
 
-    public get serviceOptions(): FingerprintingOptions {
+    get serviceOptions(): FingerprintingOptions {
         return this.service.options;
     }
 
-    public get cache(): Fingerprint[] {
+    get cache(): Fingerprint[] {
         return this.service.cache;
     }
 
-    public get cachedReferences(): Set<string> {
+    get cachedReferences(): Set<string> {
         return this.service.cachedReferences;
     }
 
-    public processObject(dataObject: DataObject, dataFrame: InOut): Promise<DataObject> {
+    processObject(dataObject: DataObject, dataFrame: InOut): Promise<DataObject> {
         return new Promise((resolve, reject) => {
             if (dataObject.position !== undefined && !this.options.locked) {
                 this.offlineFingerprinting(dataObject, dataFrame).then(resolve).catch(reject);
@@ -121,7 +121,7 @@ export class FingerprintingNode<
         });
     }
 
-    public on(name: string | symbol, listener: (...args: any[]) => void): this;
+    on(name: string | symbol, listener: (...args: any[]) => void): this;
     /**
     /**
      * Event when fingerprints are being updated
@@ -130,7 +130,7 @@ export class FingerprintingNode<
      * @param {Function} listener Event callback
      * @returns {FingerprintingNode} Instance of node
      */
-    public on(event: 'update', listener: () => Promise<void> | void): this {
+    on(event: 'update', listener: () => Promise<void> | void): this {
         return super.on(event, listener);
     }
 }

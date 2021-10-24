@@ -9,11 +9,13 @@ import {
     ModelBuilder,
     DataObject,
     Absolute3DPosition,
-    RelativeRSSI,
     Orientation,
     AngleUnit,
-    RFTransmitterObject
 } from '@openhps/core';
+import {
+    RelativeRSSI,
+    RFTransmitterObject,
+} from '@openhps/rf';
 import { CSVDataSource } from '@openhps/csv';
 import { 
     WeightFunction,

@@ -4,25 +4,25 @@
  * @see {@link http://eloquentjavascript.net/appendix2.html}
  */
 export class BinaryHeap<T> {
-    public _content: T[] = [];
+    _content: T[] = [];
     private _scoreFn: (element: T) => number;
 
     constructor(scoreFn: (element: T) => number) {
         this._scoreFn = scoreFn;
     }
 
-    public get content(): T[] {
+    get content(): T[] {
         return this._content;
     }
 
-    public push(element: T): void {
+    push(element: T): void {
         // Add the new element to the end of the array.
         this._content.push(element);
         // Allow it to bubble up.
         this.bubbleUp(this._content.length - 1);
     }
 
-    public pop(): T {
+    pop(): T {
         // Store the first element so we can return it later.
         const result = this._content[0];
         // Get the element at the end of the array.
@@ -36,7 +36,7 @@ export class BinaryHeap<T> {
         return result;
     }
 
-    public remove(node: T): void {
+    remove(node: T): void {
         const length = this._content.length;
         // To remove a value, we must search through the array to find
         // it.
@@ -57,11 +57,11 @@ export class BinaryHeap<T> {
         }
     }
 
-    public size(): number {
+    size(): number {
         return this._content.length;
     }
 
-    public bubbleUp(n: number) {
+    bubbleUp(n: number) {
         // Fetch the element that has to be moved.
         const element = this._content[n];
         const score = this._scoreFn(element);
@@ -82,11 +82,11 @@ export class BinaryHeap<T> {
         }
     }
 
-    public peek(): T {
+    peek(): T {
         return this.content[0];
     }
 
-    public sinkDown(n: number) {
+    sinkDown(n: number) {
         // Look up the target element and its score.
         const length = this._content.length;
         const element = this._content[n];

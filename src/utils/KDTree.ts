@@ -3,10 +3,10 @@ import { Fingerprint } from '../data';
 import { BinaryHeap } from './_internal/BinaryHeap';
 
 export class KDTree {
-    public axis: number;
-    public fingerprint: Fingerprint;
-    public left: KDTree;
-    public right: KDTree;
+    axis: number;
+    fingerprint: Fingerprint;
+    left: KDTree;
+    right: KDTree;
     private _distanceFn: (pointA: number[], pointB: number[]) => number;
 
     constructor(fingerprints: Fingerprint[], distanceFn: (pointA: number[], pointB: number[]) => number, depth = 0) {
@@ -75,7 +75,7 @@ export class KDTree {
         }
     }
 
-    public nearest(point: number[], count = 1, maxDistance?: number): Array<[AbsolutePosition, number]> {
+    nearest(point: number[], count = 1, maxDistance?: number): Array<[AbsolutePosition, number]> {
         const bestNodes = new BinaryHeap<[KDTree, number]>((element: [KDTree, number]) => {
             return -element[1];
         });
@@ -98,7 +98,7 @@ export class KDTree {
         return result;
     }
 
-    public get balanceFactor(): number {
+    get balanceFactor(): number {
         /**
          * Get the height of the tree node
          *

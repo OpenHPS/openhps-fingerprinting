@@ -1,24 +1,24 @@
-import { AbsolutePosition, DataObjectService, DataServiceDriver } from '@openhps/core';
+import { AbsolutePosition, DataObjectService, DataServiceDriver, DataServiceOptions } from '@openhps/core';
 import { Fingerprint } from '../data';
 
 /**
  * A fingerprint service handles the preprocessing and storage of fingerprints.
  */
 export class FingerprintService<T extends Fingerprint = Fingerprint> extends DataObjectService<T> {
-    public cache: Fingerprint[] = [];
-    public cachedReferences: Set<string> = new Set();
+    cache: Fingerprint[] = [];
+    cachedReferences: Set<string> = new Set();
     private _options: FingerprintingOptions;
 
     constructor(dataServiceDriver: DataServiceDriver<string, T>, options?: FingerprintingOptions) {
         super(dataServiceDriver);
         this.options = options || {};
-        this.name = this.options.classifier.length > 0 ? this.options.classifier : this.name;
+        this.uid = this.options.classifier.length > 0 ? this.options.classifier : this.uid;
         this.options.aggFn =
             this.options.aggFn || ((values: number[]) => values.reduce((a, b) => a + b) / values.length);
         this.once('ready', this.update.bind(this));
     }
 
-    public set options(options: FingerprintingOptions) {
+    set options(options: FingerprintingOptions) {
         this._options = options || this.options;
         // Default options
         this.options.classifier = this.options.classifier || '';
@@ -26,11 +26,11 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
         this.options.groupBy = this.options.groupBy || ((pos: AbsolutePosition) => JSON.stringify(pos.toVector3()));
     }
 
-    public get options(): FingerprintingOptions {
+    get options(): FingerprintingOptions {
         return this._options;
     }
 
-    public insert(id: string, object: T): Promise<T> {
+    insert(id: string, object: T): Promise<T> {
         return new Promise((resolve, reject) => {
             super
                 .insert(id, object)
@@ -52,7 +52,7 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
      *
      * @returns {Promise<void>} Promise of update
      */
-    public update(): Promise<void> {
+    update(): Promise<void> {
         return new Promise<void>((resolve, reject) => {
             // Load all fingerprints from the data service
             // We do not filter as we expect a separate service per classifier
@@ -111,7 +111,7 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
     }
 }
 
-export interface FingerprintingOptions {
+export interface FingerprintingOptions extends DataServiceOptions {
     /**
      * Default value of missing fingerprint values
      */

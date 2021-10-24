@@ -8,9 +8,11 @@ import {
     ModelBuilder,
     DataObject,
     Absolute3DPosition,
+} from '@openhps/core';
+import {
     RelativeRSSI,
     RFTransmitterObject,
-} from '@openhps/core';
+} from '@openhps/rf';
 import { CSVDataSource } from '@openhps/csv';
 import { EvaluationDataFrame } from '../../mock/data/EvaluationDataFrame';
 import { 

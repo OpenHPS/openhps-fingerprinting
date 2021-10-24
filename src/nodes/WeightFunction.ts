@@ -1,8 +1,8 @@
 export class WeightFunction {
-    public static readonly DEFAULT = (distance: number) => {
+    static readonly DEFAULT = (distance: number) => {
         return 1 / distance;
     };
-    public static readonly SQUARE = (distance: number) => {
+    static readonly SQUARE = (distance: number) => {
         return 1 / Math.pow(distance, 2);
     };
 }

@@ -1,8 +1,11 @@
-import { Absolute2DPosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation, RelativeRSSI } from "@openhps/core";
+import { Absolute2DPosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation } from "@openhps/core";
 import { CSVDataSource } from '@openhps/csv';
 import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, FingerprintingNode, WeightFunction } from "../../../src";
 import { expect } from "chai";
 import { EvaluationDataFrame } from "../../mock/data/EvaluationDataFrame";
+import {
+    RelativeRSSI,
+} from '@openhps/rf';
 
 describe('dataset ipin2021', () => {
     describe('wlan fingerprinting dataset', () => {
@@ -151,7 +154,7 @@ describe('dataset ipin2021', () => {
     
         it('should process the fingerprints for 4 orientations', (done) => {
             service.options.groupBy = (pos) => 
-                JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation });
+                JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation.toArray() });
             service.update().then(() => {
                 expect(service.cache.length).to.equal(416);
                 done();
@@ -170,7 +173,7 @@ describe('dataset ipin2021', () => {
 
             before((done) => {
                 service.options.groupBy = (pos) => 
-                    JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation });
+                    JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation.toArray() });
                 service.update().then(() => {
                     return testDataMean.reset();
                 }).then(() => {
@@ -185,7 +188,6 @@ describe('dataset ipin2021', () => {
                     // Accurate control location
                     const expectedLocation = data.evaluationObjects.get('phone').position as Absolute2DPosition;
                     errors.push(expectedLocation.distanceTo(calculatedLocation));
-                    console.log(calculatedLocation.accuracy, errors[errors.length - 1]);
                 };
 
                 // Perform a pull
@@ -194,7 +196,6 @@ describe('dataset ipin2021', () => {
                     sequentialPull: false,
                     sourceNode: "test-data-mean"
                 }).then(() => {
-                    console.log(errors.reduce((a, b) => a + b) / errors.length)
                     expect(Math.max(...errors)).to.be.lessThan(8.1);
                     expect(Math.min(...errors)).to.be.lessThan(0.13);
                     expect(errors.reduce((a, b) => a + b) / errors.length).to.be.lessThan(1.8);

@@ -6,11 +6,13 @@ import {
     MemoryDataService,
     Model,
     ModelBuilder, 
-    RelativeRSSI
 } from "@openhps/core";
 import { 
     CSVDataSource 
 } from "@openhps/csv";
+import {
+    RelativeRSSI
+} from '@openhps/rf';
 import { expect } from 'chai';
 import { EvaluationDataFrame } from "../../mock/data/EvaluationDataFrame";
 import { 

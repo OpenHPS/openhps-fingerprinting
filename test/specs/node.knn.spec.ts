@@ -7,16 +7,18 @@ import {
     DataObject, 
     MemoryDataService, 
     ModelBuilder, 
-    RelativeRSSI, 
-    RelativeValue, 
-    RFTransmitterObject 
 } from '@openhps/core';
+import {
+    RelativeRSSI, 
+    RFTransmitterObject 
+} from '@openhps/rf';
 import { 
     FingerprintService,
     Fingerprint,
     KNNFingerprintingNode,
     FingerprintingNode, 
 } from '../../src/';
+import { RelativeValue } from '../../src/data/RelativeValue';
 
 describe('node knn fingerprinting', () => {
 

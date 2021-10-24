@@ -4,13 +4,13 @@ import { FingerprintFeature } from './FingerprintFeature';
 
 @SerializableObject()
 export class Fingerprint extends DataObject {
-    public vector: number[];
+    vector: number[];
     @SerializableMember()
-    public classifier: string;
+    classifier: string;
     @SerializableMember()
-    public processed: boolean;
+    processed: boolean;
     @SerializableMapMember(String, FingerprintFeature)
-    public features: Map<string, FingerprintFeature> = new Map();
+    features: Map<string, FingerprintFeature> = new Map();
 
     constructor(displayName?: string) {
         super(uuidv4(), displayName);
@@ -22,7 +22,7 @@ export class Fingerprint extends DataObject {
      * @param {string} key Feature key
      * @returns {boolean} Existance of feature
      */
-    public hasFeature(key: string): boolean {
+    hasFeature(key: string): boolean {
         return this.features.has(key);
     }
 
@@ -33,7 +33,7 @@ export class Fingerprint extends DataObject {
      * @param {number} value Feature value
      * @returns {Fingerprint} instance
      */
-    public addFeature(key: string, value: number): this {
+    addFeature(key: string, value: number): this {
         const feature: FingerprintFeature = this.features.get(key) || new FingerprintFeature(key);
         feature.values.push(value);
         this.features.set(key, feature);
@@ -46,7 +46,7 @@ export class Fingerprint extends DataObject {
      *
      * @param {DataObject} obj Fingerprint source
      */
-    public set source(obj: DataObject) {
+    set source(obj: DataObject) {
         this.parentUID = obj.uid;
     }
 
@@ -55,7 +55,7 @@ export class Fingerprint extends DataObject {
      *
      * @param {Function} aggFn Aggregation function
      */
-    public computeVector(aggFn: (values: number[], key?: string) => number): void {
+    computeVector(aggFn: (values: number[], key?: string) => number): void {
         this.vector = [];
         Array.from(this.features.values())
             // Sort alphabetically

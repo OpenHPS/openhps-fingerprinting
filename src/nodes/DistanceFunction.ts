@@ -6,7 +6,7 @@ export abstract class DistanceFunction {
      * @param {number[]} pointB n-dimensional point
      * @returns {number} distance
      */
-    public static readonly EUCLIDEAN = (pointA: number[], pointB: number[]) => {
+    static readonly EUCLIDEAN = (pointA: number[], pointB: number[]) => {
         let distance = 0;
         for (let i = 0; i < pointA.length; i++) {
             distance += Math.pow(pointA[i] - pointB[i], 2);
@@ -21,7 +21,7 @@ export abstract class DistanceFunction {
      * @param {number[]} pointB n-dimensional point
      * @returns {number} distance
      */
-    public static readonly MANHATTAN = (pointA: number[], pointB: number[]) => {
+    static readonly MANHATTAN = (pointA: number[], pointB: number[]) => {
         let distance = 0;
         for (let i = 0; i < pointA.length; i++) {
             distance += Math.abs(pointA[i] - pointB[i]);
@@ -35,7 +35,7 @@ export abstract class DistanceFunction {
      * @param {number[]} pointB n-dimensional point
      * @returns {number} distance
      */
-    public static readonly CANBERRA = (pointA: number[], pointB: number[]) => {
+    static readonly CANBERRA = (pointA: number[], pointB: number[]) => {
         let distance = 0;
         for (let i = 0; i < pointA.length; i++) {
             distance += Math.abs(pointA[i] - pointB[i]) / (Math.abs(pointA[i]) + Math.abs(pointB[i]));
@@ -49,7 +49,7 @@ export abstract class DistanceFunction {
      * @param {number[]} pointB n-dimensional point
      * @returns {number} distance
      */
-    public static readonly CHEBYSHEV = (pointA: number[], pointB: number[]) => {
+    static readonly CHEBYSHEV = (pointA: number[], pointB: number[]) => {
         let maxDistance = 0;
         for (let i = 0; i < pointA.length; i++) {
             maxDistance = Math.max(maxDistance, Math.abs(pointA[i] - pointB[i]));
