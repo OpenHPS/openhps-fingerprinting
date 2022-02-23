@@ -50,7 +50,6 @@
   },
   "peerDependencies": {
     "@openhps/core": ">=0.3.13",
-    "@openhps/imu": ">=0.1.0",
     "reflect-metadata": ">=0.1.13"
   },
   "devDependencies": {
