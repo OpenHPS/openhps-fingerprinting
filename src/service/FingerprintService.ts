@@ -107,6 +107,8 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
                 fingerprint.computeVector(this.options.aggFn);
                 this.cache.push(fingerprint);
             });
+        } else {
+            this.cache = []; // Clear cache
         }
     }
 }
