@@ -73,10 +73,10 @@ export class FingerprintingNode<
      *  Use relative positions to retrieve a position.
      *
      * @param {DataObject} dataObject Data object to reverse fingerprint
-     * @param {DataFrame} dataFrame Data frame this data object was included in
+     * @param {DataFrame} _dataFrame Data frame this data object was included in
      * @returns {Promise<DataObject>} Promise of data object
      */
-    protected onlineFingerprinting(dataObject: DataObject, dataFrame: InOut): Promise<DataObject> {
+    protected onlineFingerprinting(dataObject: DataObject, _dataFrame: InOut): Promise<DataObject> {
         return new Promise((resolve) => {
             resolve(dataObject);
         });
