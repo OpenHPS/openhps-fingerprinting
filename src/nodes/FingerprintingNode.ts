@@ -10,7 +10,6 @@ import { FingerprintingOptions, FingerprintService } from '../service/Fingerprin
 
 /**
  * Fingerprinting processing node. Stores and computes fingerprints.
- *
  * @category Processing node
  */
 export class FingerprintingNode<
@@ -70,8 +69,7 @@ export class FingerprintingNode<
 
     /**
      * Online fingerprinting
-     *  Use relative positions to retrieve a position.
-     *
+     * Use relative positions to retrieve a position.
      * @param {DataObject} dataObject Data object to reverse fingerprint
      * @param {DataFrame} dataFrame Data frame this data object was included in
      * @returns {Promise<DataObject>} Promise of data object
@@ -84,8 +82,7 @@ export class FingerprintingNode<
 
     /**
      * Offline fingerprinting
-     *  Store the fingerprint if it has a position and relative positions.
-     *
+     * Store the fingerprint if it has a position and relative positions.
      * @param {DataObject} dataObject Data object to treat as fingerprinting source
      * @param {DataFrame} dataFrame Data frame this data object was included in
      * @returns {Promise<DataObject>} Data object promise
@@ -104,6 +101,11 @@ export class FingerprintingNode<
                 // Do not add relative position if reference value is unusable
                 if (rel.referenceValue !== undefined && !isNaN(rel.referenceValue)) {
                     fingerprint.addFeature(rel.referenceObjectUID, rel.referenceValue);
+
+                    // Serialize context using relative positions
+                    if (this.options.serializeContext) {
+                        fingerprint.addRelativePosition(rel);
+                    }
                 }
             });
 
@@ -124,8 +126,7 @@ export class FingerprintingNode<
     on(name: string | symbol, listener: (...args: any[]) => void): this;
     /**
     /**
-     * Event when fingerprints are being updated
-     *
+    Event when fingerprints are being updated
      * @param {string} event update
      * @param {Function} listener Event callback
      * @returns {FingerprintingNode} Instance of node
@@ -139,7 +140,6 @@ export interface FingerprintingNodeOptions extends ObjectProcessingNodeOptions {
     locked?: boolean;
     /**
      * Fingerprint classifier
-     *
      * @default ""
      */
     classifier?: string;
@@ -147,4 +147,9 @@ export interface FingerprintingNodeOptions extends ObjectProcessingNodeOptions {
      * Filter on relative positions
      */
     valueFilter?: (pos: RelativePosition) => boolean;
+    /**
+     * Serialize contextual information about fingerprint features
+     * This option uses more memory.
+     */
+    serializeContext?: boolean;
 }

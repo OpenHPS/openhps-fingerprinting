@@ -18,7 +18,6 @@ export class Fingerprint extends DataObject {
 
     /**
      * Check if a fingerprint has a feature
-     *
      * @param {string} key Feature key
      * @returns {boolean} Existance of feature
      */
@@ -28,7 +27,6 @@ export class Fingerprint extends DataObject {
 
     /**
      * Add a feature to the fingerprint
-     *
      * @param {string} key Feature key
      * @param {number} value Feature value
      * @returns {Fingerprint} instance
@@ -43,7 +41,6 @@ export class Fingerprint extends DataObject {
     /**
      * Set the fingerprint source. This can be used to identify the
      * user or device that captured the data.
-     *
      * @param {DataObject} obj Fingerprint source
      */
     set source(obj: DataObject) {
@@ -52,7 +49,6 @@ export class Fingerprint extends DataObject {
 
     /**
      * Compute the relative position vector from the relative positions
-     *
      * @param {Function} aggFn Aggregation function
      */
     computeVector(aggFn: (values: number[], key?: string) => number): void {

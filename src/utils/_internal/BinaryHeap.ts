@@ -1,6 +1,5 @@
 /**
  * Binary Heap Implementation
- *
  * @see {@link http://eloquentjavascript.net/appendix2.html}
  */
 export class BinaryHeap<T> {
