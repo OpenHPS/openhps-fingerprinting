@@ -7,7 +7,6 @@ import { RelativeValue } from '../data/RelativeValue';
 
 /**
  * KNN Fingerprinting processing node
- *
  * @category Processing node
  */
 export class KNNFingerprintingNode<InOut extends DataFrame> extends FingerprintingNode<InOut> {
@@ -122,13 +121,11 @@ export interface KNNFingerprintingOptions extends FingerprintingNodeOptions {
     naive?: boolean;
     /**
      * Similarity function (distance function)
-     *
      * @default DistanceFunction.EUCLIDEAN
      */
     similarityFunction?: (point: number[], fingerprint: number[]) => number;
     /**
      * Weight function
-     *
      * @default WeightFunction.DEFAULT
      */
     weightFunction?: (distance: number) => number;
