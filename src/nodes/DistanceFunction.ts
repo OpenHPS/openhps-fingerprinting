@@ -1,6 +1,7 @@
 export abstract class DistanceFunction {
     /**
      * Euclidean distance function
+     *
      * @param {number[]} pointA n-dimensional point
      * @param {number[]} pointB n-dimensional point
      * @returns {number} distance
@@ -15,6 +16,7 @@ export abstract class DistanceFunction {
     };
     /**
      * Manhattan distance function
+     *
      * @param {number[]} pointA n-dimensional point
      * @param {number[]} pointB n-dimensional point
      * @returns {number} distance
@@ -28,6 +30,7 @@ export abstract class DistanceFunction {
     };
     /**
      * Canberra distance function
+     *
      * @param {number[]} pointA n-dimensional point
      * @param {number[]} pointB n-dimensional point
      * @returns {number} distance
@@ -41,6 +44,7 @@ export abstract class DistanceFunction {
     };
     /**
      * Chebyshev distance function
+     *
      * @param {number[]} pointA n-dimensional point
      * @param {number[]} pointB n-dimensional point
      * @returns {number} distance

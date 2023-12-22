@@ -49,6 +49,7 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
 
     /**
      * Trigger an update of all fingerprints
+     *
      * @returns {Promise<void>} Promise of update
      */
     update(): Promise<void> {
@@ -90,6 +91,7 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
 
     /**
      * Cache filtered fingerprints
+     *
      * @param {Fingerprint[]} fingerprints Filtered fingerprints
      */
     protected cacheFingerprints(fingerprints: Fingerprint[]): void {
@@ -118,6 +120,7 @@ export interface FingerprintingOptions extends DataServiceOptions {
     defaultValue?: number;
     /**
      * Fingerprint classifier
+     *
      * @default ""
      */
     classifier?: string;
@@ -129,6 +132,7 @@ export interface FingerprintingOptions extends DataServiceOptions {
     groupBy?: (position: AbsolutePosition) => any;
     /**
      * Aggregation function
+     *
      * @default {} Mean value
      */
     aggFn?: (values: number[], key?: string) => number;
@@ -137,6 +141,7 @@ export interface FingerprintingOptions extends DataServiceOptions {
      * fingerprint.
      *
      * Enabling this can cause performance issues
+     *
      * @default false
      */
     autoUpdate?: boolean;
