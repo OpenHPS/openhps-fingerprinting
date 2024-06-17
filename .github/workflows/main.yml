@@ -27,7 +27,7 @@ jobs:
           key: ${{ runner.os }}-build-v1-${{ github.run_number }}
       - name: Installing dependencies
         run: |
-          npm install
+          yarn install
       - name: Build
         run: |
           npm run build

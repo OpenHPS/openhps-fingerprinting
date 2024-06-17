@@ -10,7 +10,7 @@ import { FingerprintingOptions, FingerprintService } from '../service/Fingerprin
 
 /**
  * Fingerprinting processing node. Stores and computes fingerprints.
- * @type {@link http://purl.org/poso/Fingerprinting}
+ * @rdf {@link http://purl.org/poso/HighLevelFusion} {@link http://purl.org/poso/Fingerprinting}
  * @category Processing node
  */
 export class FingerprintingNode<

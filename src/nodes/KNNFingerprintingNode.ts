@@ -7,7 +7,7 @@ import { RelativeValue } from '../data/RelativeValue';
 
 /**
  * KNN Fingerprinting processing node
- * @type {@link http://purl.org/poso/KNNFingerprinting}
+ * @rdf {@link http://purl.org/poso/KNNFingerprinting}
  * @category Processing node
  */
 export class KNNFingerprintingNode<InOut extends DataFrame> extends FingerprintingNode<InOut> {
