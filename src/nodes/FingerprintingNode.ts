@@ -10,7 +10,7 @@ import { FingerprintingOptions, FingerprintService } from '../service/Fingerprin
 
 /**
  * Fingerprinting processing node. Stores and computes fingerprints.
- *
+ * @type {@link http://purl.org/poso/Fingerprinting}
  * @category Processing node
  */
 export class FingerprintingNode<
@@ -71,7 +71,6 @@ export class FingerprintingNode<
     /**
      * Online fingerprinting
      * Use relative positions to retrieve a position.
-     *
      * @param {DataObject} dataObject Data object to reverse fingerprint
      * @param {DataFrame} dataFrame Data frame this data object was included in
      * @returns {Promise<DataObject>} Promise of data object
@@ -85,7 +84,6 @@ export class FingerprintingNode<
     /**
      * Offline fingerprinting
      * Store the fingerprint if it has a position and relative positions.
-     *
      * @param {DataObject} dataObject Data object to treat as fingerprinting source
      * @param {DataFrame} dataFrame Data frame this data object was included in
      * @returns {Promise<DataObject>} Data object promise
@@ -130,7 +128,6 @@ export class FingerprintingNode<
     /**
     /**
     Event when fingerprints are being updated
-     *
      * @param {string} event update
      * @param {Function} listener Event callback
      * @returns {FingerprintingNode} Instance of node
@@ -144,7 +141,6 @@ export interface FingerprintingNodeOptions extends ObjectProcessingNodeOptions {
     locked?: boolean;
     /**
      * Fingerprint classifier
-     *
      * @default ""
      */
     classifier?: string;

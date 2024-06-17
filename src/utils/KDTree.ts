@@ -101,7 +101,6 @@ export class KDTree {
     get balanceFactor(): number {
         /**
          * Get the height of the tree node
-         *
          * @param {KDTree} node KD tree node
          * @returns {number} Height of the tree
          */
@@ -114,7 +113,6 @@ export class KDTree {
 
         /**
          * Count the nodes in the tree
-         *
          * @param {KDTree} node KD tree node
          * @returns {number} number of nodes in the tree
          */
