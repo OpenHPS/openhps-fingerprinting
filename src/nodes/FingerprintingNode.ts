@@ -5,7 +5,7 @@ import {
     ObjectProcessingNode,
     ObjectProcessingNodeOptions,
 } from '@openhps/core';
-import { Fingerprint } from '../data';
+import { Fingerprint, RelativeValue } from '../data';
 import { FingerprintingOptions, FingerprintService } from '../service/FingerprintService';
 
 /**
@@ -58,6 +58,22 @@ export class FingerprintingNode<
 
     processObject(dataObject: DataObject, dataFrame: InOut): Promise<DataObject> {
         return new Promise((resolve, reject) => {
+            // Include custom features
+            if (this.options.features && this.options.features.length > 0) {
+                this.options.features.forEach((feature) => {
+                    let value: number;
+                    let key: string;
+                    if (typeof feature === 'string') {
+                        key = feature;
+                        value = dataObject[feature];
+                    } else {
+                        key = feature.key;
+                        value = feature.value(dataObject);
+                    }
+                    dataObject.addRelativePosition(new RelativeValue(`__property_${key}`, value));
+                });
+            }
+
             if (dataObject.position !== undefined && !this.options.locked) {
                 this.offlineFingerprinting(dataObject, dataFrame).then(resolve).catch(reject);
             } else if (dataObject.relativePositions.length > 0) {
@@ -137,7 +153,9 @@ export class FingerprintingNode<
     }
 }
 
-export interface FingerprintingNodeOptions extends ObjectProcessingNodeOptions {
+type NumberProperty<T> = keyof { [K in keyof T as T[K] extends number ? K : never]: T[K] };
+
+export interface FingerprintingNodeOptions<T extends DataObject = DataObject> extends ObjectProcessingNodeOptions {
     locked?: boolean;
     /**
      * Fingerprint classifier
@@ -153,4 +171,9 @@ export interface FingerprintingNodeOptions extends ObjectProcessingNodeOptions {
      * This option uses more memory.
      */
     serializeContext?: boolean;
+    /**
+     * A list of features to include in the fingerprint
+     * Only features of type number are allowed
+     */
+    features?: (NumberProperty<T> | { key: string; value: (obj: T) => number })[];
 }

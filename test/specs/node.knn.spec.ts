@@ -5,8 +5,12 @@ import {
     CallbackSinkNode, 
     DataFrame, 
     DataObject, 
+    GraphBuilder, 
     MemoryDataService, 
-    ModelBuilder, 
+    ModelBuilder,
+    Pressure,
+    SerializableMember,
+    SerializableObject, 
 } from '@openhps/core';
 import {
     RelativeRSSI, 
@@ -77,6 +81,62 @@ describe('node knn fingerprinting', () => {
                     done();
                 }).catch(done);
                 m.push(frame);
+            }).catch(done);
+    });
+
+    it('should support custom features', (done) => {
+        @SerializableObject()
+        class CustomObject extends DataObject {
+            @SerializableMember()
+            pressure: Pressure;
+        }
+
+        ModelBuilder.create()
+            .addService(new FingerprintService(new MemoryDataService(Fingerprint), {
+                autoUpdate: true,
+            }))
+            .addShape(GraphBuilder.create()
+                .from("offline")
+                .via(new FingerprintingNode({
+                    name: "fingerprinting",
+                    features: [
+                        { key: "pressure", value: (object: CustomObject) => object.pressure.value }
+                    ],
+                }))
+                .to(new CallbackSinkNode())
+            )
+            .addShape(GraphBuilder.create()
+                .from("online")
+                .via(new KNNFingerprintingNode({
+                    features: [
+                        { key: "pressure", value: (object: CustomObject) => object.pressure.value }
+                    ],
+                }))
+                .to(new CallbackSinkNode())
+            )
+            .build().then(m => {
+                const object = new CustomObject("phone");
+                object.setPosition(new Absolute2DPosition(1, 1));
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_1"), 4));
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_2"), 5));
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_3"), 6));
+                object.pressure = new Pressure(1013);
+                const frame = new DataFrame(object);
+                const offline = m.findNodeByName("offline");
+                const online = m.findNodeByName("online");
+                offline.onceCompleted(frame.uid).then(() => {
+                    const node1 = m.findNodeByName("fingerprinting") as KNNFingerprintingNode<any>;
+                    expect(node1.cache.length).to.be.equal(1);
+                    expect(node1.cache[0].vector.length).to.equal(4);
+                    // Now test online fingerprinting
+                    object.position = undefined;
+                    const frame = new DataFrame(object);
+                    online.onceCompleted(frame.uid).then(() => {
+                        done();
+                    });
+                    online.push(frame);
+                }).catch(done);
+                offline.push(frame);
             }).catch(done);
     });
 

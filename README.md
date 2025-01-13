@@ -6,12 +6,6 @@
     <a href="https://github.com/OpenHPS/openhps-fingerprinting/actions/workflows/main.yml" target="_blank">
         <img alt="Build Status" src="https://github.com/OpenHPS/openhps-fingerprinting/actions/workflows/main.yml/badge.svg">
     </a>
-    <a href="https://codecov.io/gh/OpenHPS/openhps-fingerprinting">
-        <img src="https://codecov.io/gh/OpenHPS/openhps-fingerprinting/branch/master/graph/badge.svg"/>
-    </a>
-    <a href="https://codeclimate.com/github/OpenHPS/openhps-fingerprinting/" target="_blank">
-        <img alt="Maintainability" src="https://img.shields.io/codeclimate/maintainability/OpenHPS/openhps-fingerprinting">
-    </a>
     <a href="https://badge.fury.io/js/@openhps%2Ffingerprinting">
         <img src="https://badge.fury.io/js/@openhps%2Ffingerprinting.svg" alt="npm version" height="18">
     </a>
@@ -75,6 +69,11 @@ ModelBuilder.create()
         .to(/* ... */)) // Output frame with applied position
     .build();
 ```
+
+### Custom Properties
+It is possible to store custom properties in the fingerprint data object. This can be useful for creating features that
+contain non-relative features such as sensor values or other data.
+
 
 ## Contributors
 The framework is open source and is mainly developed by PhD Student Maxim Van de Wynckel as part of his research towards *Hybrid Positioning and Implicit Human-Computer Interaction* under the supervision of Prof. Dr. Beat Signer.
