@@ -1,6 +1,6 @@
 {
   "name": "@openhps/fingerprinting",
-  "version": "0.1.9",
+  "version": "1.0.0",
   "description": "Open Hybrid Positioning System",
   "author": "Maxim Van de Wynckel",
   "license": "Apache-2.0",
@@ -58,6 +58,7 @@
     "@commitlint/config-conventional": "^19.2.2",
     "@openhps/core": "^0.7.4",
     "@openhps/csv": "0.1.11",
+    "@openhps/geospatial": "^0.1.33",
     "@openhps/rf": "^0.1.62",
     "@purtuga/esm-webpack-plugin": "^1.5.0",
     "@types/chai": "^4.3.16",

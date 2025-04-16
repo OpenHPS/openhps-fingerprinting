@@ -60,28 +60,32 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
                     const processed = new Map<string, Fingerprint>();
                     this.cachedReferences = new Set();
 
-                    fingerprints.forEach((fingerprint) => {
-                        // Cache all known reference objects
-                        fingerprint.features.forEach((_, key) => {
-                            if (!this.cachedReferences.has(key)) this.cachedReferences.add(key);
-                        });
-
-                        // Append fingerprint value
-                        const group = JSON.stringify(this.options.groupBy(fingerprint.position));
-                        if (processed.has(group)) {
-                            const existingFingerprint = processed.get(group);
-                            fingerprint.features.forEach((feature) => {
-                                existingFingerprint.addFeature(feature.key, feature.values[0]);
+                    try {
+                        fingerprints.forEach((fingerprint) => {
+                            // Cache all known reference objects
+                            fingerprint.features.forEach((_, key) => {
+                                if (!this.cachedReferences.has(key)) this.cachedReferences.add(key);
                             });
-                        } else {
-                            processed.set(group, fingerprint);
-                        }
-                    });
-                    const filteredFingerprints = Array.from(processed.values());
 
-                    // Cache relative positions to vector values
-                    this.cacheFingerprints(filteredFingerprints);
-                    this.emit('update');
+                            // Append fingerprint value
+                            const group = JSON.stringify(this.options.groupBy(fingerprint.position));
+                            if (processed.has(group)) {
+                                const existingFingerprint = processed.get(group);
+                                fingerprint.features.forEach((feature) => {
+                                    existingFingerprint.addFeature(feature.key, feature.values[0]);
+                                });
+                            } else {
+                                processed.set(group, fingerprint);
+                            }
+                        });
+                        const filteredFingerprints = Array.from(processed.values());
+
+                        // Cache relative positions to vector values
+                        this.cacheFingerprints(filteredFingerprints);
+                        this.emit('update');
+                    } catch (e) {
+                        reject(e);
+                    }
                     resolve();
                 })
                 .catch(reject);

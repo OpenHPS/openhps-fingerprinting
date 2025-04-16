@@ -23,6 +23,7 @@ import {
     FingerprintingNode, 
 } from '../../src/';
 import { RelativeValue } from '../../src/data/RelativeValue';
+import { AbstractLocation } from '@openhps/geospatial';
 
 describe('node knn fingerprinting', () => {
 
@@ -133,6 +134,69 @@ describe('node knn fingerprinting', () => {
                     const frame = new DataFrame(object);
                     online.onceCompleted(frame.uid).then(() => {
                         done();
+                    });
+                    online.push(frame);
+                }).catch(done);
+                offline.push(frame);
+            }).catch(done);
+    });
+
+
+    it('should support abstract locations', (done) => {
+        const rooms = [
+            new AbstractLocation("room1"),
+            new AbstractLocation("room2"),
+            new AbstractLocation("room3"),
+        ];
+
+        ModelBuilder.create()
+            .addService(new FingerprintService(new MemoryDataService(Fingerprint), {
+                autoUpdate: true,
+            }))
+            .addShape(GraphBuilder.create()
+                .from("offline")
+                .via(new FingerprintingNode({
+                    name: "fingerprinting"
+                }))
+                .to(new CallbackSinkNode())
+            )
+            .addShape(GraphBuilder.create()
+                .from("online")
+                .via(new KNNFingerprintingNode({
+                    k: 3,
+                    weighted: true
+                }))
+                .to(new CallbackSinkNode())
+            )
+            .build().then(m => {
+                const object = new DataObject("phone");
+                object.setPosition(rooms[0]);
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_1"), 4));
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_2"), 5));
+                object.addRelativePosition(new RelativeRSSI(new RFTransmitterObject("AP_3"), 6));
+                const frame = new DataFrame(object);
+                const offline = m.findNodeByName("offline");
+                const online = m.findNodeByName("online");
+                offline.onceCompleted(frame.uid).then(() => {
+                    const node1 = m.findNodeByName("fingerprinting") as FingerprintingNode<any>;
+                    expect(node1.cache.length).to.be.equal(1); // For validation purposes test if it registered
+                    expect(node1.cache[0].vector.length).to.equal(3); // For validation purposes
+                    // Now test online fingerprinting
+                    object.position = undefined;
+                    const frame = new DataFrame(object);
+                    online.onceCompleted(frame.uid).then(() => {
+                        // Once the frame is completed, we can check the output
+                        m.findDataService(DataObject).findByUID(object.uid).then((object) => {
+                            // Check the position of object
+                            // Now manually determine to which room it is closest to
+                            // NOTE: this can be performed in a node but is shown here for demonstration purposes
+                            const distances = rooms.map(room => room.distanceTo(object.position as AbstractLocation));
+                            const closestRoomIndex = distances.indexOf(Math.min(...distances));
+                            const closestRoom = rooms[closestRoomIndex];
+                            object.position = closestRoom;
+                            // console.log(closestRoom);
+                            done();
+                        });
                     });
                     online.push(frame);
                 }).catch(done);
