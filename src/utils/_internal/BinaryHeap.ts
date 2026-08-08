@@ -91,7 +91,6 @@ export class BinaryHeap<T> {
         const element = this._content[n];
         const elemScore = this._scoreFn(element);
 
-        // eslint-disable-next-line
         while (true) {
             // Compute the indices of the child elements.
             const child2N = (n + 1) * 2;
