@@ -99,7 +99,7 @@
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.66.0",
         "webpack": "^5.101.3",
-        "webpack-cli": "^6.0.1"
+        "webpack-cli": "^7.2.2"
     },
     "engines": {
         "node": ">=22.0.0"
