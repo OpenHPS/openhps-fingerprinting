@@ -1,188 +1,192 @@
-import { Absolute2DPosition, AngleUnit, CallbackSinkNode, DataFrame, DataObject, GraphBuilder, MemoryDataService, Model, ModelBuilder, Orientation } from "@openhps/core";
-import { CSVDataSource } from '@openhps/csv';
-import { DistanceFunction, Fingerprint, FingerprintService, KNNFingerprintingNode, FingerprintingNode, WeightFunction } from "../../../src";
-import { expect } from "chai";
-import { EvaluationDataFrame } from "../../mock/data/EvaluationDataFrame";
 import {
-    RelativeRSSI,
-} from '@openhps/rf';
+    Absolute2DPosition,
+    AngleUnit,
+    CallbackSinkNode,
+    DataFrame,
+    DataObject,
+    GraphBuilder,
+    MemoryDataService,
+    Model,
+    ModelBuilder,
+    Orientation,
+} from '@openhps/core';
+import { CSVDataSource } from '@openhps/csv';
+import {
+    DistanceFunction,
+    Fingerprint,
+    FingerprintService,
+    KNNFingerprintingNode,
+    FingerprintingNode,
+    WeightFunction,
+} from '../../../src';
+import { expect } from 'chai';
+import { EvaluationDataFrame } from '../../mock/data/EvaluationDataFrame';
+import { RelativeRSSI } from '@openhps/rf';
 
 describe('dataset ipin2021', () => {
     describe('wlan fingerprinting dataset', () => {
         let model: Model;
         let service: FingerprintService;
-        let testSink: CallbackSinkNode<any> = new CallbackSinkNode();
+        const testSink: CallbackSinkNode<any> = new CallbackSinkNode();
         let algorithm: KNNFingerprintingNode<any>;
         let trainData: CSVDataSource<any>;
         let testDataMean: CSVDataSource<any>;
         let testDataRaw: CSVDataSource<any>;
 
-        before(function(done) {
+        before(function (done) {
             service = new FingerprintService(new MemoryDataService(Fingerprint), {
                 defaultValue: -95,
             });
-    
+
             trainData = new CSVDataSource(
-                "test/data/OpenHPS-2021-02/train/raw/wlan_fingerprints.csv", 
+                'test/data/OpenHPS-2021-02/train/raw/wlan_fingerprints.csv',
                 (row: any) => {
-                    const object = new DataObject("phone");
-                    const position = new Absolute2DPosition(
-                        parseFloat(row['X']),
-                        parseFloat(row['Y'])
-                    );
+                    const object = new DataObject('phone');
+                    const position = new Absolute2DPosition(parseFloat(row['X']), parseFloat(row['Y']));
                     position.orientation = Orientation.fromEuler({
                         yaw: parseFloat(row['ORIENTATION']),
                         roll: 0,
                         pitch: 0,
-                        unit: AngleUnit.DEGREE
+                        unit: AngleUnit.DEGREE,
                     });
                     object.setPosition(position);
                     for (const prop in row) {
-                        if (prop.includes("WAP_")) {
+                        if (prop.includes('WAP_')) {
                             const rssi = parseInt(row[prop]);
-                            if (rssi !== 100)
-                                object.addRelativePosition(new RelativeRSSI(
-                                    prop, 
-                                    rssi));
+                            if (rssi !== 100) object.addRelativePosition(new RelativeRSSI(prop, rssi));
                         }
                     }
                     return new DataFrame(object);
                 },
                 {
-                    uid: "train-data",
-                    persistence: false
-                }
+                    uid: 'train-data',
+                    persistence: false,
+                },
             );
-    
+
             testDataMean = new CSVDataSource(
-                "test/data/OpenHPS-2021-02/test/aggregated/wlan_fingerprints.csv", 
+                'test/data/OpenHPS-2021-02/test/aggregated/wlan_fingerprints.csv',
                 (row: any) => {
-                    const object = new DataObject("phone");
-                    const position = new Absolute2DPosition(
-                        parseFloat(row['X']),
-                        parseFloat(row['Y'])
-                    );
+                    const object = new DataObject('phone');
+                    const position = new Absolute2DPosition(parseFloat(row['X']), parseFloat(row['Y']));
                     position.orientation = Orientation.fromEuler({
                         yaw: parseFloat(row['ORIENTATION']),
                         roll: 0,
                         pitch: 0,
-                        unit: AngleUnit.DEGREE
+                        unit: AngleUnit.DEGREE,
                     });
                     for (const prop in row) {
-                        if (prop.includes("WAP_")) {
+                        if (prop.includes('WAP_')) {
                             const rssi = parseInt(row[prop]);
-                            if (rssi !== 100)
-                                object.addRelativePosition(new RelativeRSSI(
-                                    prop, 
-                                    rssi));
+                            if (rssi !== 100) object.addRelativePosition(new RelativeRSSI(prop, rssi));
                         }
                     }
-                    const evaluationObject = new DataObject("phone");
+                    const evaluationObject = new DataObject('phone');
                     evaluationObject.setPosition(position);
                     const frame = new EvaluationDataFrame(object);
                     frame.evaluationObjects.set('phone', evaluationObject);
                     return frame;
                 },
                 {
-                    uid: "test-data-mean",
-                    persistence: false
-                }
+                    uid: 'test-data-mean',
+                    persistence: false,
+                },
             );
 
             testDataRaw = new CSVDataSource(
-                "test/data/OpenHPS-2021-02/test/raw/wlan_fingerprints.csv", 
+                'test/data/OpenHPS-2021-02/test/raw/wlan_fingerprints.csv',
                 (row: any) => {
-                    const object = new DataObject("phone");
-                    const position = new Absolute2DPosition(
-                        parseFloat(row['X']),
-                        parseFloat(row['Y'])
-                    );
+                    const object = new DataObject('phone');
+                    const position = new Absolute2DPosition(parseFloat(row['X']), parseFloat(row['Y']));
                     position.orientation = Orientation.fromEuler({
                         yaw: parseFloat(row['ORIENTATION']),
                         roll: 0,
                         pitch: 0,
-                        unit: AngleUnit.DEGREE
+                        unit: AngleUnit.DEGREE,
                     });
                     for (const prop in row) {
-                        if (prop.includes("WAP_")) {
+                        if (prop.includes('WAP_')) {
                             const rssi = parseInt(row[prop]);
-                            if (rssi !== 100)
-                                object.addRelativePosition(new RelativeRSSI(
-                                    prop, 
-                                    rssi));
+                            if (rssi !== 100) object.addRelativePosition(new RelativeRSSI(prop, rssi));
                         }
                     }
-                    const evaluationObject = new DataObject("phone");
+                    const evaluationObject = new DataObject('phone');
                     evaluationObject.setPosition(position);
                     const frame = new EvaluationDataFrame(object);
                     frame.evaluationObjects.set('phone', evaluationObject);
                     return frame;
                 },
                 {
-                    uid: "test-data-raw"
-                }
+                    uid: 'test-data-raw',
+                },
             );
-    
+
             algorithm = new KNNFingerprintingNode({
                 weighted: true,
                 k: 4,
                 weightFunction: WeightFunction.SQUARE,
-                similarityFunction: DistanceFunction.EUCLIDEAN
+                similarityFunction: DistanceFunction.EUCLIDEAN,
             });
-            
+
             ModelBuilder.create()
                 .addService(service)
-                .addShape(GraphBuilder.create()
-                    .from(trainData)
-                    .via(new FingerprintingNode())
-                    .to())
-                .addShape(GraphBuilder.create()
-                    .from(testDataMean, testDataRaw)
-                    .via(algorithm)
-                    .to(testSink))
-                .build().then(m => {
+                .addShape(GraphBuilder.create().from(trainData).via(new FingerprintingNode()).to())
+                .addShape(GraphBuilder.create().from(testDataMean, testDataRaw).via(algorithm).to(testSink))
+                .build()
+                .then((m) => {
                     model = m;
                     return model.pull({
                         count: trainData.size,
                         sequentialPull: false,
-                        sourceNode: "train-data"
+                        sourceNode: 'train-data',
                     });
-                }).then(() => {
+                })
+                .then(() => {
                     done();
-                }).catch(done);
+                })
+                .catch(done);
         });
-    
+
         it('should process the fingerprints for 4 orientations', (done) => {
-            service.options.groupBy = (pos) => 
+            service.options.groupBy = (pos) =>
                 JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation.toArray() });
-            service.update().then(() => {
-                expect(service.cache.length).to.equal(416);
-                done();
-            }).catch(done);
+            service
+                .update()
+                .then(() => {
+                    expect(service.cache.length).to.equal(416);
+                    done();
+                })
+                .catch(done);
         });
 
         it('should process the fingerprints for mean orientation', (done) => {
             service.options.groupBy = (pos) => JSON.stringify(pos.toVector3());
-            service.update().then(() => {
-                expect(service.cache.length).to.equal(104);
-                done();
-            }).catch(done);
-        });
-    
-        describe('online stage 4 orientations', () => {
-
-            before((done) => {
-                service.options.groupBy = (pos) => 
-                    JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation.toArray() });
-                service.update().then(() => {
-                    return testDataMean.reset();
-                }).then(() => {
+            service
+                .update()
+                .then(() => {
+                    expect(service.cache.length).to.equal(104);
                     done();
-                }).catch(done);
+                })
+                .catch(done);
+        });
+
+        describe('online stage 4 orientations', () => {
+            before((done) => {
+                service.options.groupBy = (pos) =>
+                    JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation.toArray() });
+                service
+                    .update()
+                    .then(() => {
+                        return testDataMean.reset();
+                    })
+                    .then(() => {
+                        done();
+                    })
+                    .catch(done);
             });
 
             it('should have an average accuracy of 1.8 meters', (done) => {
-                let errors = []
+                const errors = [];
                 testSink.callback = (data: EvaluationDataFrame) => {
                     const calculatedLocation = data.source.position as Absolute2DPosition;
                     // Accurate control location
@@ -191,61 +195,65 @@ describe('dataset ipin2021', () => {
                 };
 
                 // Perform a pull
-                testSink.pull({
-                    count: testDataMean.size,
-                    sequentialPull: false,
-                    sourceNode: "test-data-mean"
-                }).then(() => {
-                    expect(Math.max(...errors)).to.be.lessThan(8.1);
-                    expect(Math.min(...errors)).to.be.lessThan(0.13);
-                    expect(errors.reduce((a, b) => a + b) / errors.length).to.be.lessThan(1.8);
-                    done();
-                }).catch(done);
+                testSink
+                    .pull({
+                        count: testDataMean.size,
+                        sequentialPull: false,
+                        sourceNode: 'test-data-mean',
+                    })
+                    .then(() => {
+                        expect(Math.max(...errors)).to.be.lessThan(8.1);
+                        expect(Math.min(...errors)).to.be.lessThan(0.13);
+                        expect(errors.reduce((a, b) => a + b) / errors.length).to.be.lessThan(1.8);
+                        done();
+                    })
+                    .catch(done);
             });
-
         });
 
         describe('online stage mean orientation', () => {
-
             before((done) => {
-                service.options.groupBy = (pos) => 
-                    JSON.stringify(pos.toVector3());
-                service.update().then(() => {
-                    return testDataMean.reset();
-                }).then(() => {
-                    done();
-                }).catch(done);
+                service.options.groupBy = (pos) => JSON.stringify(pos.toVector3());
+                service
+                    .update()
+                    .then(() => {
+                        return testDataMean.reset();
+                    })
+                    .then(() => {
+                        done();
+                    })
+                    .catch(done);
             });
 
             it('should have an average accuracy of 1.8 meters', (done) => {
-                let errors = []
+                const errors = [];
                 testSink.callback = (data: EvaluationDataFrame) => {
                     const calculatedLocation = data.source.position as Absolute2DPosition;
                     // Accurate control location
                     const expectedLocation = data.evaluationObjects.get('phone').position as Absolute2DPosition;
                     errors.push(expectedLocation.distanceTo(calculatedLocation));
                 };
-                
+
                 // Perform a pull
-                testSink.pull({
-                    count: testDataMean.size,
-                    sequentialPull: false,
-                    sourceNode: "test-data-mean"
-                }).then(() => {
-                    const stats = {
-                        maxError: Math.max(...errors),
-                        minError: Math.min(...errors),
-                        avgError: errors.reduce((a, b) => a + b) / errors.length,
-                    };
-                    expect(stats.maxError).to.be.lessThan(8);
-                    expect(stats.minError).to.be.lessThan(0.05);
-                    expect(stats.avgError).to.be.lessThan(2.50);
-                    done();
-                }).catch(done);
+                testSink
+                    .pull({
+                        count: testDataMean.size,
+                        sequentialPull: false,
+                        sourceNode: 'test-data-mean',
+                    })
+                    .then(() => {
+                        const stats = {
+                            maxError: Math.max(...errors),
+                            minError: Math.min(...errors),
+                            avgError: errors.reduce((a, b) => a + b) / errors.length,
+                        };
+                        expect(stats.maxError).to.be.lessThan(8);
+                        expect(stats.minError).to.be.lessThan(0.05);
+                        expect(stats.avgError).to.be.lessThan(2.5);
+                        done();
+                    })
+                    .catch(done);
             });
-
         });
-
     });
-    
 });

@@ -12,12 +12,7 @@ import {
     Absolute3DPosition,
 } from '@openhps/core';
 import { CSVDataSource } from '@openhps/csv';
-import { 
-    FingerprintService,
-    Fingerprint,
-    KNNFingerprintingNode,
-    FingerprintingNode
-} from '../../../src/';
+import { FingerprintService, Fingerprint, KNNFingerprintingNode, FingerprintingNode } from '../../../src/';
 
 describe('dataset', () => {
     describe('openhps-2020-04 (imu only)', function () {
@@ -36,7 +31,7 @@ describe('dataset', () => {
 
             const fingerprintService = new FingerprintService(new MemoryDataService(Fingerprint), {
                 autoUpdate: true,
-                groupBy: (pos) => JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation })
+                groupBy: (pos) => JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation }),
             });
 
             // Calibration model to set-up or train the model
@@ -66,21 +61,25 @@ describe('dataset', () => {
                         return dataFrame;
                     }),
                 )
-                .via(new FingerprintingNode({
-                    objectFilter: (object: DataObject) => object.uid === 'phone',
-                }))
+                .via(
+                    new FingerprintingNode({
+                        objectFilter: (object: DataObject) => object.uid === 'phone',
+                    }),
+                )
                 .to(new CallbackSinkNode())
                 .build()
                 .then((model) => {
                     calibrationModel = model;
                     callbackNode = new CallbackSinkNode<EvaluationDataFrame>();
 
-                    model.pull({
-                        count: 60,
-                        sequentialPull: false
-                    }).then(() => {
-                        done();
-                    });
+                    model
+                        .pull({
+                            count: 60,
+                            sequentialPull: false,
+                        })
+                        .then(() => {
+                            done();
+                        });
                 });
         });
 
@@ -153,15 +152,18 @@ describe('dataset', () => {
                 };
 
                 // Perform a pull
-                trackingModel.pull({
-                    count: 120,
-                    sequentialPull: false
-                }).then(() => {
-                    expect(totalError / totalValues).to.be.lessThan(120);
-                    done();
-                }).catch((ex) => {
-                    done(ex);
-                });
+                trackingModel
+                    .pull({
+                        count: 120,
+                        sequentialPull: false,
+                    })
+                    .then(() => {
+                        expect(totalError / totalValues).to.be.lessThan(120);
+                        done();
+                    })
+                    .catch((ex) => {
+                        done(ex);
+                    });
             }).timeout(50000);
         });
     });

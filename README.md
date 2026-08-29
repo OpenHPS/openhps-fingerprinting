@@ -18,70 +18,85 @@
 <br />
 
 This component provides nodes and services for positioning using fingerprinting. The following algorithms are supported:
+
 - **k-NN**: With support for a custom distance/similarity function
 - **Weighted k-NN**: With support for a custom weight function
 
 ## Getting Started
+
 If you have [npm installed](https://www.npmjs.com/get-npm), start using @openhps/fingerprinting with the following command.
+
 ```bash
 npm install @openhps/fingerprinting --save
 ```
 
 ## Usage
+
 Offline fingerprinting works by storing a data objects relative positions. These relative positions can be
-RSSI levels to Wireless Access Points, BLE beacons or even geometric information stored as ```RelativeValue```.
+RSSI levels to Wireless Access Points, BLE beacons or even geometric information stored as `RelativeValue`.
 
 The fingerprinting service will pre process these fingerprints (merging, filling in missing values, ...) so they
 can be used by online fingerprinting nodes. Fingerprinting services can be extended to perform more pre processing, such
 as inter or extrapolation.
 
-Depending on the fingerprinting algorithm, an online fingerprinting node such as the ```KNNFingerprintingNode``` will use the
+Depending on the fingerprinting algorithm, an online fingerprinting node such as the `KNNFingerprintingNode` will use the
 stored and preprocessed fingerprints to reverse an objects relative positions to an absolute position.
 
 ```typescript
 import { ModelBuilder, GraphBuilder } from '@openhps/core';
-import { 
-    FingerprintService,         // Pre processes fingerprints
-    FingerprintingNode,         // Stores fingerprints
-    KNNFingerprintingNode,      // Reverse fingerprinting
+import {
+    FingerprintService, // Pre processes fingerprints
+    FingerprintingNode, // Stores fingerprints
+    KNNFingerprintingNode, // Reverse fingerprinting
     WeightFunction,
-    DistanceFunction
+    DistanceFunction,
 } from '@openhps/fingerprinting';
 
 ModelBuilder.create()
     // Add a service with memory storage
-    .addService(new FingerprintService(new MemoryDataService(Fingerprint), {
-        defaultValue: -95,          // Default RSSI value
-        autoUpdate: true            // Automatically preprocess fingerprints
-    }))
-    .addShape(GraphBuilder.create() // Offline stage
-        .from(/* ... */)
-        .via(new FingerprintingNode())
-        .to(/* ... */))
-    .addShape(GraphBuilder.create() // Online stage
-        .from(/* ... */)
-        .via(new KNNFingerprintingNode({
-            k: 3,
-            weighted: true,
-            weightFunction: WeightFunction.SQUARE,
-            similarityFunction: DistanceFunction.EUCLIDEAN
-        }))
-        .to(/* ... */)) // Output frame with applied position
+    .addService(
+        new FingerprintService(new MemoryDataService(Fingerprint), {
+            defaultValue: -95, // Default RSSI value
+            autoUpdate: true, // Automatically preprocess fingerprints
+        }),
+    )
+    .addShape(
+        GraphBuilder.create() // Offline stage
+            .from(/* ... */)
+            .via(new FingerprintingNode())
+            .to(/* ... */),
+    )
+    .addShape(
+        GraphBuilder.create() // Online stage
+            .from(/* ... */)
+            .via(
+                new KNNFingerprintingNode({
+                    k: 3,
+                    weighted: true,
+                    weightFunction: WeightFunction.SQUARE,
+                    similarityFunction: DistanceFunction.EUCLIDEAN,
+                }),
+            )
+            .to(/* ... */),
+    ) // Output frame with applied position
     .build();
 ```
 
 ### Custom Properties
+
 It is possible to store custom properties in the fingerprint data object. This can be useful for creating features that
 contain non-relative features such as sensor values or other data.
 
-
 ## Contributors
-The framework is open source and is mainly developed by PhD Student Maxim Van de Wynckel as part of his research towards *Hybrid Positioning and Implicit Human-Computer Interaction* under the supervision of Prof. Dr. Beat Signer.
+
+The framework is open source and is mainly developed by PhD Student Maxim Van de Wynckel as part of his research towards _Hybrid Positioning and Implicit Human-Computer Interaction_ under the supervision of Prof. Dr. Beat Signer.
 
 ## Contributing
-Use of OpenHPS, contributions and feedback is highly appreciated. Please read our [contributing guidelines](CONTRIBUTING.md) for more information.
+
+Use of OpenHPS, contributions and feedback is highly appreciated. Please read our [contributing guidelines](https://github.com/OpenHPS/.github/blob/HEAD/CONTRIBUTING.md) for more information.
 
 ## License
+
 Copyright (C) 2019-2024 Maxim Van de Wynckel & Vrije Universiteit Brussel
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at

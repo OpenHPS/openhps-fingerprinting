@@ -12,12 +12,9 @@ import {
     Orientation,
     AngleUnit,
 } from '@openhps/core';
-import {
-    RelativeRSSI,
-    RFTransmitterObject,
-} from '@openhps/rf';
+import { RelativeRSSI, RFTransmitterObject } from '@openhps/rf';
 import { CSVDataSource } from '@openhps/csv';
-import { 
+import {
     WeightFunction,
     Fingerprint,
     FingerprintService,
@@ -42,7 +39,7 @@ describe('dataset', () => {
 
             const fingerprintService = new FingerprintService(new MemoryDataService(Fingerprint), {
                 defaultValue: -95,
-                groupBy: (pos) => JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation })
+                groupBy: (pos) => JSON.stringify({ pos: pos.toVector3(), orientation: pos.orientation }),
             });
 
             // Calibration model to set-up or train the model
@@ -61,7 +58,7 @@ describe('dataset', () => {
                             roll: 0,
                             pitch: 0,
                             yaw: parseInt(row['ORIENTATION']) * 90,
-                            unit: AngleUnit.DEGREE
+                            unit: AngleUnit.DEGREE,
                         });
                         for (const prop in row) {
                             if (prop.indexOf('WAP_') !== -1) {
@@ -90,11 +87,13 @@ describe('dataset', () => {
                         pullPromises.push(model.pull());
                     }
 
-                    Promise.all(pullPromises).then(() => {
-                        return fingerprintService.update();
-                    }).then(() => {
-                        done();
-                    });
+                    Promise.all(pullPromises)
+                        .then(() => {
+                            return fingerprintService.update();
+                        })
+                        .then(() => {
+                            done();
+                        });
                 });
         });
 
@@ -138,7 +137,7 @@ describe('dataset', () => {
                             weighted: true,
                             naive: true,
                             weightFunction: WeightFunction.SQUARE,
-                            objectFilter: (object: DataObject) => object.uid === 'phone'
+                            objectFilter: (object: DataObject) => object.uid === 'phone',
                         }),
                     )
                     .to(callbackNode)
@@ -168,14 +167,16 @@ describe('dataset', () => {
                 };
 
                 // Perform a pull
-                trackingModel.pull({
-                    count: 120,
-                    sequentialPull: false
-                }).then(() => {
-                    expect(totalError / totalValues).to.be.lessThan(77);
-                    done();
-                })
-                .catch(done);
+                trackingModel
+                    .pull({
+                        count: 120,
+                        sequentialPull: false,
+                    })
+                    .then(() => {
+                        expect(totalError / totalValues).to.be.lessThan(77);
+                        done();
+                    })
+                    .catch(done);
             }).timeout(50000);
         });
     });

@@ -9,18 +9,10 @@ import {
     DataObject,
     Absolute3DPosition,
 } from '@openhps/core';
-import {
-    RelativeRSSI,
-    RFTransmitterObject,
-} from '@openhps/rf';
+import { RelativeRSSI, RFTransmitterObject } from '@openhps/rf';
 import { CSVDataSource } from '@openhps/csv';
 import { EvaluationDataFrame } from '../../mock/data/EvaluationDataFrame';
-import { 
-    FingerprintService,
-    Fingerprint,
-    KNNFingerprintingNode,
-    FingerprintingNode
-} from '../../../src/';
+import { FingerprintService, Fingerprint, KNNFingerprintingNode, FingerprintingNode } from '../../../src/';
 
 describe('dataset', () => {
     describe('openhps-2020-04 (ble only)', function () {
@@ -39,52 +31,56 @@ describe('dataset', () => {
 
             const fingerprintService = new FingerprintService(new MemoryDataService(Fingerprint), {
                 defaultValue: 200,
-                autoUpdate: true
+                autoUpdate: true,
             });
 
             // Calibration model to set-up or train the model
             ModelBuilder.create()
                 .addService(fingerprintService)
                 .from(
-                    new CSVDataSource('test/data/OpenHPS-2020-04/train_data.csv', (row: any) => {
-                        const dataFrame = new DataFrame();
-                        const phoneObject = new DataObject('phone');
-                        phoneObject.position = new Absolute3DPosition(
-                            parseFloat(row['X']),
-                            parseFloat(row['Y']),
-                            parseFloat(row['Z']),
-                        );
-                        for (const prop in row) {
-                            if (prop.indexOf('BEACON_') !== -1) {
-                                const value = parseFloat(row[prop]);
-                                if (value !== 100) {
-                                    const object = new RFTransmitterObject(prop);
-                                    dataFrame.addObject(object);
-                                    const relativeLocation = new RelativeRSSI(object, value);
-                                    phoneObject.addRelativePosition(relativeLocation);
+                    new CSVDataSource(
+                        'test/data/OpenHPS-2020-04/train_data.csv',
+                        (row: any) => {
+                            const dataFrame = new DataFrame();
+                            const phoneObject = new DataObject('phone');
+                            phoneObject.position = new Absolute3DPosition(
+                                parseFloat(row['X']),
+                                parseFloat(row['Y']),
+                                parseFloat(row['Z']),
+                            );
+                            for (const prop in row) {
+                                if (prop.indexOf('BEACON_') !== -1) {
+                                    const value = parseFloat(row[prop]);
+                                    if (value !== 100) {
+                                        const object = new RFTransmitterObject(prop);
+                                        dataFrame.addObject(object);
+                                        const relativeLocation = new RelativeRSSI(object, value);
+                                        phoneObject.addRelativePosition(relativeLocation);
+                                    }
                                 }
                             }
-                        }
-                        dataFrame.addObject(phoneObject);
-                        return dataFrame;
-                    }, { uid: "train" })
+                            dataFrame.addObject(phoneObject);
+                            return dataFrame;
+                        },
+                        { uid: 'train' },
+                    ),
                 )
-                .via(
-                    new FingerprintingNode()
-                )
+                .via(new FingerprintingNode())
                 .to(new CallbackSinkNode())
                 .build()
                 .then((model) => {
                     calibrationModel = model;
                     callbackNode = new CallbackSinkNode<EvaluationDataFrame>();
 
-                    model.pull({
-                        count: 60,
-                        sourceNode: "train",
-                        sequentialPull: false
-                    }).then(() => {
-                        done();
-                    });
+                    model
+                        .pull({
+                            count: 60,
+                            sourceNode: 'train',
+                            sequentialPull: false,
+                        })
+                        .then(() => {
+                            done();
+                        });
                 });
         });
 
@@ -156,19 +152,19 @@ describe('dataset', () => {
                 };
 
                 // Perform a pull
-                trackingModel.pull({
-                    count: 120,
-                    sequentialPull: false
-                }).then(() => {
-                    expect(totalError / totalValues).to.be.lessThan(91);
-                    done();
-                })
-                .catch((ex) => {
-                    done(ex);
-                });
+                trackingModel
+                    .pull({
+                        count: 120,
+                        sequentialPull: false,
+                    })
+                    .then(() => {
+                        expect(totalError / totalValues).to.be.lessThan(91);
+                        done();
+                    })
+                    .catch((ex) => {
+                        done(ex);
+                    });
             }).timeout(50000);
         });
     });
-
-    
 });
