@@ -42,7 +42,10 @@ export class KDTree {
         }
         const vector = [...node.fingerprint.vector];
 
-        vector[this.axis] = point[this.axis];
+        // Project the query point onto this node's splitting plane. Using the node's own axis
+        // (not the root node's axis) is essential: otherwise the distance to the plane is
+        // overestimated for every node below the root and valid branches get pruned.
+        vector[node.axis] = point[node.axis];
 
         if (node.right === undefined && node.left === undefined) {
             if (bestNodes.size() < count || ownDistance < bestNodes.peek()[1]) {
@@ -55,7 +58,7 @@ export class KDTree {
         }
 
         const [subtree, otherSubtree] =
-            point[this.axis] < node.fingerprint.vector[this.axis] ? [node.left, node.right] : [node.right, node.left];
+            point[node.axis] < node.fingerprint.vector[node.axis] ? [node.left, node.right] : [node.right, node.left];
 
         if (subtree) {
             this._nearestSearch(point, bestNodes, count, subtree);
@@ -95,6 +98,9 @@ export class KDTree {
                 result.push([bestNodes.content[i][0].fingerprint.position, bestNodes.content[i][1]]);
             }
         }
+        // The binary heap only guarantees that the largest distance is at the root; return the
+        // neighbours ordered from nearest to farthest so callers can rely on result[0].
+        result.sort((a, b) => a[1] - b[1]);
         return result;
     }
 
