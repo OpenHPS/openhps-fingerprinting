@@ -52,15 +52,12 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
                 }
             });
 
-            const dataObjectPoint: number[] = [];
-            filteredReferences
+            const dataObjectPoint: number[] = filteredReferences
                 // Sort alphabetically
                 .sort((a: RelativePosition, b: RelativePosition) =>
                     a.referenceObjectUID.localeCompare(b.referenceObjectUID),
                 )
-                .forEach((rel) => {
-                    dataObjectPoint.push(rel.referenceValue);
-                });
+                .map((rel) => rel.referenceValue);
 
             // Perform reverse fingerprinting
             let results = new Array<[AbsolutePosition, number]>();
@@ -81,6 +78,11 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
                 results = this.kdtree.nearest(dataObjectPoint, this.options.k);
             }
 
+            // No fingerprints matched (e.g. an empty cache); keep the data object unchanged
+            if (results.length === 0) {
+                return resolve(dataObject);
+            }
+
             const point: Vector3 = new Vector3(0, 0, 0);
             if (this.options.weighted) {
                 let scale = 0;
@@ -94,7 +96,9 @@ export class KNNFingerprintingNode<InOut extends DataFrame> extends Fingerprinti
                 results.forEach((sortedFingerprint) => {
                     point.add(sortedFingerprint[0].toVector3());
                 });
-                point.divideScalar(this.options.k);
+                // Divide by the number of neighbours actually found: the cache can hold
+                // fewer than k fingerprints, which would pull the position toward the origin.
+                point.divideScalar(results.length);
             }
 
             // Set a new position

@@ -31,19 +31,13 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
     }
 
     insert(id: string, object: T): Promise<T> {
-        return new Promise((resolve, reject) => {
-            super
-                .insert(id, object)
-                .then((storedObject) => {
-                    if (!this.options.autoUpdate) {
-                        return resolve(storedObject);
-                    }
-                    return [storedObject, this.update()];
-                })
-                .then((result: [T, any]) => {
-                    resolve(result[0]);
-                })
-                .catch(reject);
+        return super.insert(id, object).then((storedObject) => {
+            if (!this.options.autoUpdate) {
+                return storedObject;
+            }
+            // Await the update so the caller only resolves once the cache is consistent,
+            // and so a failed update rejects this promise instead of going unhandled
+            return this.update().then(() => storedObject);
         });
     }
 
@@ -72,7 +66,11 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
                             if (processed.has(group)) {
                                 const existingFingerprint = processed.get(group);
                                 fingerprint.features.forEach((feature) => {
-                                    existingFingerprint.addFeature(feature.key, feature.values[0]);
+                                    // Merge all recorded values so the aggregation function
+                                    // can work on the complete set of samples
+                                    feature.values.forEach((value) => {
+                                        existingFingerprint.addFeature(feature.key, value);
+                                    });
                                 });
                             } else {
                                 processed.set(group, fingerprint);
@@ -83,10 +81,10 @@ export class FingerprintService<T extends Fingerprint = Fingerprint> extends Dat
                         // Cache relative positions to vector values
                         this.cacheFingerprints(filteredFingerprints);
                         this.emit('update');
+                        resolve();
                     } catch (e) {
                         reject(e);
                     }
-                    resolve();
                 })
                 .catch(reject);
         });

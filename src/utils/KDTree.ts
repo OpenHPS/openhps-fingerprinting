@@ -18,18 +18,21 @@ export class KDTree {
 
         const dimensions = fingerprints[0].vector.length;
         this.axis = depth % dimensions;
-        fingerprints.sort((a, b) => a.vector[this.axis] - b.vector[this.axis]);
 
-        const medianIndex = Math.floor(fingerprints.length / 2);
+        // Sort a copy so the caller's array (e.g. the fingerprint service cache) is not mutated
+        const sortedFingerprints = [...fingerprints];
+        sortedFingerprints.sort((a, b) => a.vector[this.axis] - b.vector[this.axis]);
 
-        this.fingerprint = fingerprints[medianIndex];
+        const medianIndex = Math.floor(sortedFingerprints.length / 2);
 
-        const leftFingerprints = fingerprints.slice(0, medianIndex);
+        this.fingerprint = sortedFingerprints[medianIndex];
+
+        const leftFingerprints = sortedFingerprints.slice(0, medianIndex);
         if (leftFingerprints.length) {
             this.left = new KDTree(leftFingerprints, this._distanceFn, depth + 1);
         }
 
-        const rightFingerprints = fingerprints.slice(medianIndex + 1);
+        const rightFingerprints = sortedFingerprints.slice(medianIndex + 1);
         if (rightFingerprints.length) {
             this.right = new KDTree(rightFingerprints, this._distanceFn, depth + 1);
         }
@@ -79,6 +82,11 @@ export class KDTree {
     }
 
     nearest(point: number[], count = 1, maxDistance?: number): Array<[AbsolutePosition, number]> {
+        // An empty tree (no fingerprints in the cache) has no nodes to search
+        if (this.fingerprint === undefined) {
+            return [];
+        }
+
         const bestNodes = new BinaryHeap<[KDTree, number]>((element: [KDTree, number]) => {
             return -element[1];
         });
